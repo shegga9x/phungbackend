@@ -6,7 +6,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - DATABASE_HOST=172.19.0.3
+      - DATABASE_HOST=172.19.0.1
       - DATABASE_USERNAME=user
       - DATABASE_PASSWORD=password
       - DATABASE_PORT=3306
