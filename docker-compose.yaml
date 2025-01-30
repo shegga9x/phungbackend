@@ -6,7 +6,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - DATABASE_HOST=172.19.0.2
+      - DATABASE_HOST=172.22.0.3
       - DATABASE_USERNAME=user
       - DATABASE_PASSWORD=password
       - DATABASE_PORT=3306
@@ -14,7 +14,21 @@ services:
       - BASE_URL=https://47.129.38.106:8080
     networks:
       - app_net
- 
+  database:
+    image: mysql:latest
+    restart: always
+    container_name: database
+    environment:
+      MYSQL_DATABASE: 'starter-kit-db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - "3306:3306"
+    volumes:
+      - starter_kit_db:/var/lib/mysql
+    networks:
+      - app_net
 networks:
   app_net:
     driver: bridge
