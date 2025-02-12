@@ -1,0 +1,25 @@
+FROM books A
+JOIN book_authors B ON A.id = B.book_id 
+JOIN authors D ON B.author_id = D.id
+GROUP BY A.title 
+ORDER BY `values_list` DESC 
+LIMIT 100;
+
+SELECT A.*, GROUP_CONCAT(DISTINCT D.name SEPARATOR ', ') AS listAuthors, AVG(C.score) AS avg_score
+FROM books A
+LEFT OUTER JOIN book_authors B ON A.id = B.book_id 
+LEFT OUTER JOIN authors D ON B.author_id = D.id
+LEFT OUTER JOIN ratings C ON A.id = C.book_id 
+where A.`type` = 'Novel'
+GROUP BY A.id,A.title
+ORDER BY A.price; 
+
+SELECT COUNT(*)
+FROM (
+    SELECT A.title, GROUP_CONCAT(DISTINCT D.name SEPARATOR ', ') AS listAuthors, AVG(C.score) AS avg_score
+    FROM books A
+    LEFT OUTER JOIN book_authors B ON A.id = B.book_id 
+    LEFT OUTER JOIN authors D ON B.author_id = D.id
+    LEFT OUTER JOIN ratings C ON A.id = C.book_id 
+    GROUP BY A.title
+)   AS subquery;

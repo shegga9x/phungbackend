@@ -62,7 +62,7 @@ public class NotificationService {
 
   public void sendNotification(String title, String message, String url) {
     List<PushNotificationSubscription> subscriptions = notificationSubscriptionRepository.findAll();
-
+    
     for (PushNotificationSubscription subscription : subscriptions) {
       Thread.ofVirtual().start(() -> {
         try {

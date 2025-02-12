@@ -5,13 +5,9 @@ import com.example.backend.util.exception.ApiException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 
 @Slf4j
 public class SecurityUtil {
-  private static final SecurityContextRepository securityContextRepository =
-      new HttpSessionSecurityContextRepository();
 
   /**
    * Get the authenticated user from the SecurityContextHolder

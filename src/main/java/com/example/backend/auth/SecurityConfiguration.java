@@ -18,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,8 +27,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
@@ -62,6 +59,7 @@ public class SecurityConfiguration {
           .requestMatchers(antMatcher(HttpMethod.GET, "/api/auth/impersonate/exit")).hasRole("PREVIOUS_ADMINISTRATOR")
           .requestMatchers(antMatcher(HttpMethod.GET, "/api/notifications/subscribe")).permitAll()
           .requestMatchers(antMatcher(HttpMethod.POST, "/api/notifications/delivery/**")).permitAll()
+          .requestMatchers(antMatcher("/api/v1/**")).permitAll()
           .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
           .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
           .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
@@ -83,7 +81,7 @@ public class SecurityConfiguration {
     http.addFilterBefore(new UsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.userDetailsService(userDetailsService);
 
-    http.csrf(AbstractHttpConfigurer::disable); // TODO: Implement jwt token based authentication
+    http.csrf(AbstractHttpConfigurer::disable); //  Implement jwt token based authentication
 
 //    http.csrf(csrf -> {
 //      csrf

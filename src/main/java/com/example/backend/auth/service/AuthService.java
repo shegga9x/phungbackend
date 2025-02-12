@@ -4,7 +4,6 @@ import com.example.backend.auth.SecurityUtil;
 import com.example.backend.auth.data.LoginRequest;
 import com.example.backend.users.User;
 import com.example.backend.users.data.UserResponse;
-import com.example.backend.users.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
-  private final UserRepository userRepository;
   private final AuthenticationManager authenticationManager;
   private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
   SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();

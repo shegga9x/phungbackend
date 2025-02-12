@@ -14,6 +14,7 @@ public class SendResetPasswordEmailJob implements JobRequest {
 
   private Long tokenId;
 
+  @SuppressWarnings("rawtypes")
   @Override
   public Class<? extends JobRequestHandler> getJobRequestHandler() {
     return SendResetPasswordEmailJobHandler.class;

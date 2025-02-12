@@ -1,4 +1,4 @@
-version: '2'
+version: '1'
 services:
   # be:
   #   image: shegga/phung_be:jenkins
@@ -19,21 +19,21 @@ services:
   #     - host.docker.internal:host-gateway
 
 
-  # jenkins:
-  #   image: jenkins/jenkins:lts
-  #   privileged: true
-  #   user: root
-  #   ports:
-  #     - 8080:8080
-  #     - 50000:50000
-  #   container_name: jenkins
-  #   volumes:
-  #     - ~/jenkins:/var/jenkins_home
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /usr/bin/docker:/usr/bin/docker
-  #     - /usr/libexec/docker/cli-plugins:/usr/libexec/docker/cli-plugins
-  #   networks:
-  #     - app_net
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    container_name: jenkins
+    volumes:
+      - ~/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/libexec/docker/cli-plugins:/usr/libexec/docker/cli-plugins
+    networks:
+      - app_net
 
 networks:
   app_net:

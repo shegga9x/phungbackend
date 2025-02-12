@@ -14,6 +14,7 @@ public class SendWelcomeEmailJob implements JobRequest {
 
   private Long userId;
 
+  @SuppressWarnings("rawtypes")
   @Override
   public Class<? extends JobRequestHandler> getJobRequestHandler() {
     return SendWelcomeEmailJobHandler.class;
