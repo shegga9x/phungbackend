@@ -6,6 +6,10 @@ package com.example.backend.telosys.persistence.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.example.backend.users.User;
+import com.example.backend.util.Client;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,6 +26,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
+@Client
 @Table(name = "ratings", catalog = "starter-kit-db")
 @IdClass(RatingsId.class)
 public class Ratings implements Serializable {
@@ -31,11 +36,11 @@ public class Ratings implements Serializable {
     // --- PRIMARY KEY
     @Id
     @Column(name = "book_id", nullable = false)
-    private int bookId;
+    private Long bookId;
 
     @Id
     @Column(name = "user_id", nullable = false)
-    private int userId;
+    private Long userId;
 
     // --- OTHER DATA FIELDS
     @Column(name = "score", nullable = false)
@@ -48,7 +53,7 @@ public class Ratings implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
 
-    private Users users;
+    private User users;
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id", insertable = false, updatable = false)
@@ -61,19 +66,26 @@ public class Ratings implements Serializable {
         super();
     }
 
-    public void setBookId(int bookId) {
+    public Ratings(Long bookId, Long userId, byte score, LocalDateTime ratedAt) {
+        this.bookId = bookId;
+        this.userId = userId;
+        this.score = score;
+        this.ratedAt = ratedAt;
+    }
+
+    public void setBookId(Long bookId) {
         this.bookId = bookId;
     }
 
-    public int getBookId() {
+    public Long getBookId() {
         return this.bookId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
@@ -93,7 +105,7 @@ public class Ratings implements Serializable {
         return this.ratedAt;
     }
 
-    public Users getUsers() {
+    public User getUser() {
         return this.users;
     }
 

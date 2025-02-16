@@ -71,7 +71,7 @@ public class RatingsService extends GenericService<Ratings, RatingsDTO> {
 	 * @param userId
 	 * @return the entity or null if not found
 	 */
-	public RatingsDTO findById(int bookId, int userId) {
+	public RatingsDTO findById(Long bookId, Long userId) {
 		RatingsId entityId = new RatingsId(bookId, userId);
 		logger.debug("findById({})", entityId);
 		Optional<Ratings> optionalEntity = repository.findById(entityId);
@@ -100,7 +100,7 @@ public class RatingsService extends GenericService<Ratings, RatingsDTO> {
 	 * @param userId
 	 * @param dto
 	 */
-	public void save(int bookId, int userId, RatingsDTO dto) {
+	public void save(Long bookId, Long userId, RatingsDTO dto) {
 		RatingsId entityId = new RatingsId(bookId, userId);
 		logger.debug("save({},{})", entityId, dto);
 		// force PK in DTO (just to be sure to conform with the given PK)
@@ -133,7 +133,7 @@ public class RatingsService extends GenericService<Ratings, RatingsDTO> {
 	 * @param dto
 	 * @return true if updated, false if not found
 	 */
-	public boolean partialUpdate(int bookId, int userId, RatingsDTO dto) {
+	public boolean partialUpdate(Long bookId, Long userId, RatingsDTO dto) {
 		RatingsId entityId = new RatingsId(bookId, userId);
 		logger.debug("partialUpdate({}, {})", entityId, dto);
 		Optional<Ratings> optionalEntity = repository.findById(entityId);
@@ -157,12 +157,9 @@ public class RatingsService extends GenericService<Ratings, RatingsDTO> {
 	 */
 	public boolean create(RatingsDTO dto) {
 		logger.debug("create({})", dto);
-		if (repository.existsById(getEntityId(dto))) {
-			return false; // already exists, not created
-		} else {
-			repository.save(dtoToEntity(dto));
-			return true; // created
-		}
+		Ratings entity = new Ratings(dto.getBookId(), dto.getUserId(), dto.getScore(), dto.getRatedAt());
+		repository.save(entity);
+		return true; // created
 	}
 
 	/**
@@ -172,7 +169,7 @@ public class RatingsService extends GenericService<Ratings, RatingsDTO> {
 	 * @param userId
 	 * @return true if deleted, false if not found
 	 */
-	public boolean deleteById(int bookId, int userId) {
+	public boolean deleteById(Long bookId, Long userId) {
 		RatingsId entityId = new RatingsId(bookId, userId);
 		logger.debug("deleteById({})", entityId);
 		if (repository.existsById(entityId)) {

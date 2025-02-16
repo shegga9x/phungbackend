@@ -5,12 +5,16 @@ import com.example.backend.users.data.CreateUserRequest;
 import com.example.backend.users.data.UpdateUserRequest;
 import com.example.backend.util.ApplicationContextProvider;
 import com.example.backend.util.Client;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 /**
- * User is an entity that can be authenticated and authorized to access the application.
+ * User is an entity that can be authenticated and authorized to access the
+ * application.
  */
 @Entity
 @Getter
@@ -36,6 +41,7 @@ public class User extends AbstractEntity implements UserDetails {
   private String password;
   private String firstName;
   private String lastName;
+  private BigDecimal balance;
   @Setter
   private boolean verified = false;
   @Setter
@@ -51,7 +57,6 @@ public class User extends AbstractEntity implements UserDetails {
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   private List<UserConnectedAccount> connectedAccounts = new ArrayList<>();
 
-
   public User(CreateUserRequest data) {
     PasswordEncoder passwordEncoder = ApplicationContextProvider.bean(PasswordEncoder.class);
     this.email = data.getEmail();
@@ -61,7 +66,7 @@ public class User extends AbstractEntity implements UserDetails {
     this.role = Role.USER;
   }
 
-  public User (OAuth2User oAuth2User) {
+  public User(OAuth2User oAuth2User) {
     User user = new User();
     user.email = oAuth2User.getAttribute("email");
     String name = oAuth2User.getAttribute("name");
@@ -102,6 +107,7 @@ public class User extends AbstractEntity implements UserDetails {
     return email;
   }
 
+
   @Override
   public boolean isAccountNonExpired() {
     return true;
@@ -117,7 +123,8 @@ public class User extends AbstractEntity implements UserDetails {
     return true;
   }
 
-  // If you want to not allow the user to login before verifying their email, you can change this to
+  // If you want to not allow the user to login before verifying their email, you
+  // can change this to
   // return verified;
   @Override
   public boolean isEnabled() {

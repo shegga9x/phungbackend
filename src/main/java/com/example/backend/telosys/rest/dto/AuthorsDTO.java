@@ -17,7 +17,7 @@ public class AuthorsDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //--- PRIMARY KEY 
-    private int id ;
+    private Long id ;
     //--- OTHER DATA FIELDS 
     private String name ;
     private Boolean gender ;
@@ -31,10 +31,10 @@ public class AuthorsDTO implements Serializable {
 		super();
     }
     
-    public void setId( int id ) {
+    public void setId( Long id ) {
         this.id = id ;
     }
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

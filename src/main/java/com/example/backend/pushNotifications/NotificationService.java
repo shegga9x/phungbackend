@@ -26,6 +26,7 @@ public class NotificationService {
 
   private final NotificationSubscriptionRepository notificationSubscriptionRepository;
   private final NotificationPermissionRequestRepository notificationPermissionRequestRepository;
+  @SuppressWarnings("unused")
   private final ApplicationProperties applicationProperties;
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final PushService pushService;

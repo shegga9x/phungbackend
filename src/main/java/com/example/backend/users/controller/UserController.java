@@ -27,7 +27,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Client
-public class UsersController {
+public class UserController {
 
   private final UserService userService;
   private final ApplicationProperties applicationProperties;

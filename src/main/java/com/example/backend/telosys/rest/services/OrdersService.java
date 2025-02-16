@@ -15,12 +15,14 @@ import org.springframework.stereotype.Service;
 import com.example.backend.telosys.persistence.entities.Orders;
 import com.example.backend.telosys.persistence.repositories.BooksRepository;
 import com.example.backend.telosys.persistence.repositories.OrdersRepository;
-import com.example.backend.telosys.persistence.repositories.UsersRepository;
 import com.example.backend.telosys.rest.dto.BooksDTO;
 import com.example.backend.telosys.rest.dto.OrdersDTO;
 import com.example.backend.telosys.rest.dto.OrdersResponseDTO;
-import com.example.backend.telosys.rest.dto.UsersDTO;
+import com.example.backend.telosys.rest.dto.UserDTO;
 import com.example.backend.telosys.rest.services.commons.GenericService;
+import com.example.backend.users.repository.UserRepository;
+import com.example.backend.users.service.UserService;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -40,15 +42,15 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	private final OrdersRepository repository; // injected by constructor
 
 	private final BooksService booksService; // injected by constructor
-	private final UsersService usersService; // injected by constructor
+	private final UserService usersService; // injected by constructor
 
 	/**
 	 * Constructor (usable for Dependency Injection)
 	 * 
 	 * @param repository the repository to be injected
 	 */
-	public OrdersService(OrdersRepository repository, BooksRepository booksRepository, UsersRepository uRepository,
-			BooksService booksService, UsersService usersService) {
+	public OrdersService(OrdersRepository repository, BooksRepository booksRepository, UserRepository uRepository,
+			BooksService booksService, UserService usersService) {
 		super(Orders.class, OrdersDTO.class);
 		this.repository = repository;
 		this.booksService = booksService;
@@ -61,7 +63,7 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	 * @param dto
 	 * @return
 	 */
-	private Integer getEntityId(OrdersDTO dto) {
+	private Long getEntityId(OrdersDTO dto) {
 		return dto.getId();
 	}
 
@@ -82,8 +84,8 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	 * @param id
 	 * @return the entity or null if not found
 	 */
-	public OrdersDTO findById(int id) {
-		Integer entityId = id;
+	public OrdersDTO findById(Long id) {
+		Long entityId = id;
 		logger.debug("findById({})", entityId);
 		Optional<Orders> optionalEntity = repository.findById(entityId);
 		return entityToDto(optionalEntity);
@@ -96,8 +98,8 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	 * @param id
 	 * @param dto
 	 */
-	public void save(int id, OrdersDTO dto) {
-		Integer entityId = id;
+	public void save(Long id, OrdersDTO dto) {
+		Long entityId = id;
 		logger.debug("save({},{})", entityId, dto);
 		// force PK in DTO (just to be sure to conform with the given PK)
 		dto.setId(id);
@@ -127,8 +129,8 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	 * @param dto
 	 * @return true if updated, false if not found
 	 */
-	public boolean partialUpdate(int id, OrdersDTO dto) {
-		Integer entityId = id;
+	public boolean partialUpdate(Long id, OrdersDTO dto) {
+		Long entityId = id;
 		logger.debug("partialUpdate({}, {})", entityId, dto);
 		Optional<Orders> optionalEntity = repository.findById(entityId);
 		if (optionalEntity.isPresent()) {
@@ -162,8 +164,8 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	 * @param id
 	 * @return true if deleted, false if not found
 	 */
-	public boolean deleteById(int id) {
-		Integer entityId = id;
+	public boolean deleteById(Long id) {
+		Long entityId = id;
 		logger.debug("deleteById({})", entityId);
 		if (repository.existsById(entityId)) {
 			repository.deleteById(entityId);
@@ -189,7 +191,7 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 			throw new IllegalArgumentException("Not enough stock");
 		}
 		BigDecimal cost = book.getPrice().multiply(BigDecimal.valueOf(dto.getQuality()));
-		UsersDTO user = usersService.findById(dto.getUserId());
+		UserDTO user = usersService.findById(dto.getUserId());
 		if (user.getBalance().compareTo(cost) < 0) {
 			throw new IllegalArgumentException("Not enough balance");
 		}
@@ -202,6 +204,7 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update book or user", e);
 		}
+		
 		Orders order = dtoToEntity(dto);
 		Orders savedOrder = repository.save(order);
 		OrdersResponseDTO ordersResponseDTO = new OrdersResponseDTO(entityToDto(savedOrder), cost, remain);

@@ -19,7 +19,7 @@ public class BooksDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //--- PRIMARY KEY 
-    private int id ;
+    private Long id ;
     //--- OTHER DATA FIELDS 
     private String title ;
     private String type ;
@@ -34,10 +34,10 @@ public class BooksDTO implements Serializable {
 		super();
     }
     
-    public void setId( int id ) {
+    public void setId( Long id ) {
         this.id = id ;
     }
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

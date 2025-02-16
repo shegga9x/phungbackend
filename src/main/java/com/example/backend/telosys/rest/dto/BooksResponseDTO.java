@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BooksResponseDTO {
-    private int id;
+    private Long id;
     private String title;
     private String type;
     private LocalDateTime publishedAt;
@@ -29,11 +29,11 @@ public class BooksResponseDTO {
     public BooksResponseDTO() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -91,7 +91,7 @@ public class BooksResponseDTO {
         for (Object[] row : objects) {
             BooksResponseDTO dto = new BooksResponseDTO();
             if (row.length >= 8) {
-                dto.setId((int) row[0]);
+                dto.setId((Long) row[0]);
                 dto.setTitle((String) row[1]);
                 dto.setType((String) row[2]);
                 Timestamp sqlTime = (Timestamp) row[3];

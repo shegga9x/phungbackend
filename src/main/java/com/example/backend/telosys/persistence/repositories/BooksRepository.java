@@ -28,7 +28,7 @@ import com.example.backend.telosys.persistence.entities.Books;
  * @author Telosys
  *
  */
-public interface BooksRepository extends JpaRepository<Books, Integer> {
+public interface BooksRepository extends JpaRepository<Books, Long> {
 
 	@Query(value = "SELECT b.*, GROUP_CONCAT(DISTINCT a.name SEPARATOR ', ') AS listAuthors, AVG(r.score) AS avg_score "
 			+

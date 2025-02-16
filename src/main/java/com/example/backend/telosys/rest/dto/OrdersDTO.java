@@ -18,15 +18,15 @@ public class OrdersDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //--- PRIMARY KEY 
-    private int id ;
+    private Long id ;
     //--- OTHER DATA FIELDS 
-    private int bookId ;
-    private int userId ;
+    private Long bookId ;
+    private Long userId ;
     private byte quality ;
     private LocalDateTime orderedAt ;
     //--- LINKS ( RELATIONSHIPS )
     private BooksDTO books ; 
-    private UsersDTO users ; 
+    private UserDTO users ; 
 
     /**
      * Constructor
@@ -35,24 +35,24 @@ public class OrdersDTO implements Serializable {
 		super();
     }
     
-    public void setId( int id ) {
+    public void setId( Long id ) {
         this.id = id ;
     }
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setBookId( int bookId ) {
+    public void setBookId( Long bookId ) {
         this.bookId = bookId ;
     }
-    public int getBookId() {
+    public Long getBookId() {
         return this.bookId;
     }
 
-    public void setUserId( int userId ) {
+    public void setUserId( Long userId ) {
         this.userId = userId ;
     }
-    public int getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
@@ -74,7 +74,7 @@ public class OrdersDTO implements Serializable {
         return this.books;
     } 
 
-    public UsersDTO getUsers() {
+    public UserDTO getUser() {
         return this.users;
     } 
 

@@ -23,7 +23,7 @@ import com.example.backend.telosys.persistence.entities.Orders;
  * @author Telosys
  *
  */
-public interface OrdersRepository extends JpaRepository<Orders, Integer> {
+public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
 	// Insert specific finders here 
 

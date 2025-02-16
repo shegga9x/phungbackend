@@ -1,8 +1,5 @@
 package com.example.backend;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,18 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.example.backend.telosys.persistence.repositories.BooksRepository;
-import com.example.backend.telosys.persistence.repositories.RatingsRepository;
 import com.example.backend.telosys.rest.dto.BooksResponseDTO;
 import com.example.backend.telosys.rest.dto.OrdersDTO;
-import com.example.backend.telosys.rest.dto.RatingsDTO;
 import com.example.backend.telosys.rest.services.BooksService;
 import com.example.backend.telosys.rest.services.OrdersService;
-import com.example.backend.telosys.rest.services.RatingsService;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -32,13 +24,9 @@ public class BooksRepositoryTest {
 
 	@Autowired
 	private BooksRepository booksRepository;
-	@Autowired
-	private RatingsRepository ratingsRepository;
 
 	@Autowired
 	private BooksService booksService;
-	@Autowired
-	private RatingsService ratingsService;
 	@Autowired
 	private OrdersService ordersService;
 	@PersistenceContext
@@ -84,24 +72,4 @@ public class BooksRepositoryTest {
 		System.out.println(booksRepository.countBooksWithAuthorsAndAvgScore(null));
 	}
 
-	@Test
-	public void testFindByBookId() {
-		List<RatingsDTO> optionalEntity = ratingsService.findByBookId(1);
-		System.out.println("Parent Name: " + optionalEntity.get(0).getUser().toString());
-	}
-
-	@Test
-	public void buybook() {
-		OrdersDTO order = new OrdersDTO();
-		order.setBookId(1);
-		order.setUserId(1);
-		order.setQuality((byte) 1);
-		order.setOrderedAt(java.time.LocalDateTime.now());
-		ordersService.buyBook(order);
-		
-		System.out.println("Order placed successfully for book ID: " + order.getBookId());
-	
-	}
 }
-
-

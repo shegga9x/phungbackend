@@ -7,6 +7,9 @@ package com.example.backend.telosys.persistence.entities;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.example.backend.users.User;
+import com.example.backend.util.Client;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +27,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
+@Client
 @Table(name = "orders", catalog = "starter-kit-db")
 public class Orders implements Serializable {
 
@@ -33,7 +37,7 @@ public class Orders implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Long id;
 
     // --- OTHER DATA FIELDS
     @Column(name = "book_id", nullable = false)
@@ -55,7 +59,7 @@ public class Orders implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Users users;
+    private User users;
 
     /**
      * Constructor
@@ -64,11 +68,11 @@ public class Orders implements Serializable {
         super();
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 
@@ -108,16 +112,18 @@ public class Orders implements Serializable {
         return this.books;
     }
 
-    public Users getUsers() {
+    public User getUser() {
         return this.users;
     }
+
     public void setBooks(Books books) {
         this.books = books;
     }
 
-    public void setUsers(Users users) {
+    public void setUser(User users) {
         this.users = users;
     }
+
     @Override
     public String toString() {
         String separator = "|";

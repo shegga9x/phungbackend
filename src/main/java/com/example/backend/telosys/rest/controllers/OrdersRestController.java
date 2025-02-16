@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.telosys.rest.dto.OrdersDTO;
 import com.example.backend.telosys.rest.dto.OrdersResponseDTO;
 import com.example.backend.telosys.rest.services.OrdersService;
+import com.example.backend.util.Client;
 
 @RestController
+@Client
 @RequestMapping(value = "/api/v1/orders", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrdersRestController {
 
@@ -63,7 +65,7 @@ public class OrdersRestController {
 	 * @return 200 or 404
 	 */
 	@GetMapping("/{id}")
-	protected ResponseEntity<OrdersDTO> findById(@PathVariable int id) {
+	protected ResponseEntity<OrdersDTO> findById(@PathVariable Long id) {
 		logger.debug("REST : GET - findById");
 		OrdersDTO ordersDTO = service.findById(id);
 		if (ordersDTO != null) {
@@ -97,7 +99,7 @@ public class OrdersRestController {
 	 * @return 200 updated or created
 	 */
 	@PutMapping("/{id}")
-	protected ResponseEntity<Void> save(@PathVariable int id, @RequestBody OrdersDTO ordersDTO) {
+	protected ResponseEntity<Void> save(@PathVariable Long id, @RequestBody OrdersDTO ordersDTO) {
 		logger.debug("REST : PUT - save");
 		service.save(id, ordersDTO);
 		return ResponseEntity.ok().build(); // OK, updated or created
@@ -127,7 +129,7 @@ public class OrdersRestController {
 	 * @return 200 updated or 404 not found
 	 */
 	@PatchMapping("/{id}")
-	protected ResponseEntity<Void> partialUpdate(@PathVariable int id, @RequestBody OrdersDTO ordersDTO) {
+	protected ResponseEntity<Void> partialUpdate(@PathVariable Long id, @RequestBody OrdersDTO ordersDTO) {
 		logger.debug("REST : PATCH - partialUpdate");
 		if (service.partialUpdate(id, ordersDTO)) {
 			return ResponseEntity.ok().build(); // OK, found and updated
@@ -143,7 +145,7 @@ public class OrdersRestController {
 	 * @return 204 deleted or 404 not found
 	 */
 	@DeleteMapping("/{id}")
-	protected ResponseEntity<Void> deleteById(@PathVariable int id) {
+	protected ResponseEntity<Void> deleteById(@PathVariable Long id) {
 		logger.debug("REST : DELETE - deleteById");
 		if (service.deleteById(id)) {
 			return ResponseEntity.noContent().build(); // 204 No content = "deleted"

@@ -51,7 +51,7 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param dto
 	 * @return
 	 */
-	private Integer getEntityId(BooksDTO dto) {
+	private Long getEntityId(BooksDTO dto) {
 		return dto.getId();
 	}
 
@@ -72,8 +72,8 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param id
 	 * @return the entity or null if not found
 	 */
-	public BooksDTO findById(int id) {
-		Integer entityId = id;
+	public BooksDTO findById(Long id) {
+		Long entityId = id;
 		logger.debug("findById({})", entityId);
 		Optional<Books> optionalEntity = repository.findById(entityId);
 		return entityToDto(optionalEntity);
@@ -86,8 +86,8 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param id
 	 * @param dto
 	 */
-	public void save(int id, BooksDTO dto) {
-		Integer entityId = id;
+	public void save(Long id, BooksDTO dto) {
+		Long entityId = id;
 		logger.debug("save({},{})", entityId, dto);
 		// force PK in DTO (just to be sure to conform with the given PK)
 		dto.setId(id);
@@ -117,8 +117,8 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param dto
 	 * @return true if updated, false if not found
 	 */
-	public boolean partialUpdate(int id, BooksDTO dto) {
-		Integer entityId = id;
+	public boolean partialUpdate(Long id, BooksDTO dto) {
+		Long entityId = id;
 		logger.debug("partialUpdate({}, {})", entityId, dto);
 		Optional<Books> optionalEntity = repository.findById(entityId);
 		if (optionalEntity.isPresent()) {
@@ -152,8 +152,8 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param id
 	 * @return true if deleted, false if not found
 	 */
-	public boolean deleteById(int id) {
-		Integer entityId = id;
+	public boolean deleteById(Long id) {
+		Long entityId = id;
 		logger.debug("deleteById({})", entityId);
 		if (repository.existsById(entityId)) {
 			repository.deleteById(entityId);

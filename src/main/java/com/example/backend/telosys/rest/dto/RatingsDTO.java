@@ -18,13 +18,13 @@ public class RatingsDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // --- PRIMARY KEY
-    private int bookId;
-    private int userId;
+    private Long bookId;
+    private Long userId;
     // --- OTHER DATA FIELDS
     private byte score;
     private LocalDateTime ratedAt;
     // --- LINKS ( RELATIONSHIPS )
-    private UsersDTO users;
+    private UserDTO users;
     private BooksDTO books;
 
     /**
@@ -34,19 +34,19 @@ public class RatingsDTO implements Serializable {
         super();
     }
 
-    public void setBookId(int bookId) {
+    public void setBookId(Long bookId) {
         this.bookId = bookId;
     }
 
-    public int getBookId() {
+    public Long getBookId() {
         return this.bookId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
@@ -66,11 +66,11 @@ public class RatingsDTO implements Serializable {
         return this.ratedAt;
     }
 
-    public UsersDTO getUser() {
+    public UserDTO getUser() {
         return this.users;
     }
 
-    public void setUserDTO(UsersDTO users) {
+    public void setUserDTO(UserDTO users) {
         this.users = users;
     }
 
@@ -91,7 +91,7 @@ public class RatingsDTO implements Serializable {
         return sb.toString();
     }
 
-    public void setUsers(UsersDTO users) {
+    public void setUser(UserDTO users) {
         this.users = users;
     }
 

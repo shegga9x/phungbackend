@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.telosys.rest.dto.RatingsDTO;
 import com.example.backend.telosys.rest.services.RatingsService;
+import com.example.backend.util.Client;
 
 @RestController
+@Client
 @RequestMapping(value = "/api/v1/ratings", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatingsRestController {
 
@@ -74,7 +76,7 @@ public class RatingsRestController {
 	 * @return 200 or 404
 	 */
 	@GetMapping("/{bookId}/{userId}")
-	protected ResponseEntity<RatingsDTO> findById(@PathVariable int bookId, @PathVariable int userId) {
+	protected ResponseEntity<RatingsDTO> findById(@PathVariable Long bookId, @PathVariable Long userId) {
 		logger.debug("REST : GET - findById");
 		RatingsDTO ratingsDTO = service.findById(bookId, userId);
 		if (ratingsDTO != null) {
@@ -109,7 +111,7 @@ public class RatingsRestController {
 	 * @return 200 updated or created
 	 */
 	@PutMapping("/{bookId}/{userId}")
-	protected ResponseEntity<Void> save(@PathVariable int bookId, @PathVariable int userId,
+	protected ResponseEntity<Void> save(@PathVariable Long bookId, @PathVariable Long userId,
 			@RequestBody RatingsDTO ratingsDTO) {
 		logger.debug("REST : PUT - save");
 		service.save(bookId, userId, ratingsDTO);
@@ -141,7 +143,7 @@ public class RatingsRestController {
 	 * @return 200 updated or 404 not found
 	 */
 	@PatchMapping("/{bookId}/{userId}")
-	protected ResponseEntity<Void> partialUpdate(@PathVariable int bookId, @PathVariable int userId,
+	protected ResponseEntity<Void> partialUpdate(@PathVariable Long bookId, @PathVariable Long userId,
 			@RequestBody RatingsDTO ratingsDTO) {
 		logger.debug("REST : PATCH - partialUpdate");
 		if (service.partialUpdate(bookId, userId, ratingsDTO)) {
@@ -159,7 +161,7 @@ public class RatingsRestController {
 	 * @return 204 deleted or 404 not found
 	 */
 	@DeleteMapping("/{bookId}/{userId}")
-	protected ResponseEntity<Void> deleteById(@PathVariable int bookId, @PathVariable int userId) {
+	protected ResponseEntity<Void> deleteById(@PathVariable Long bookId, @PathVariable Long userId) {
 		logger.debug("REST : DELETE - deleteById");
 		if (service.deleteById(bookId, userId)) {
 			return ResponseEntity.noContent().build(); // 204 No content = "deleted"

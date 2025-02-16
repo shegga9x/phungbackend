@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
 @Client
-public class AdminUsersController {
+public class AdminUserController {
 
   private final AdminUserService userService;
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<PagedResponse<UserResponse>> admin_getUsers(
+  public ResponseEntity<PagedResponse<UserResponse>> admin_getUser(
       @RequestParam(value = "page", defaultValue = "0") int page
   ) {
-    PagedResponse<UserResponse> users = userService.getUsers(page);
+    PagedResponse<UserResponse> users = userService.getUser(page);
     return ResponseEntity.ok(users);
   }
 

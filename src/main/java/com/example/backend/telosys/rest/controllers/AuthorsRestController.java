@@ -23,15 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.telosys.rest.dto.AuthorsDTO;
 import com.example.backend.telosys.rest.services.AuthorsService;
+import com.example.backend.util.Client;
 
 @RestController
+@Client
 @RequestMapping(value = "/api/v1/authors", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthorsRestController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthorsRestController.class);
-	
-	private AuthorsService service ; // injected
-	
+
+	private AuthorsService service; // injected
+
 	/**
 	 * Constructor (usable for Dependency Injection)
 	 *
@@ -41,7 +43,7 @@ public class AuthorsRestController {
 		super();
 		this.service = service;
 	}
-    
+
 	/**
 	 * Get ALL
 	 *
@@ -49,43 +51,40 @@ public class AuthorsRestController {
 	 */
 	@GetMapping("")
 	protected ResponseEntity<List<AuthorsDTO>> findAll() {
-    	logger.debug("REST : GET - findAll");
-    	List<AuthorsDTO> list = service.findAll();
-    	return ResponseEntity.ok(list); // always 200
-    }
-    
-    /**
-     * Get ONE identified by the given PK
+		logger.debug("REST : GET - findAll");
+		List<AuthorsDTO> list = service.findAll();
+		return ResponseEntity.ok(list); // always 200
+	}
+
+	/**
+	 * Get ONE identified by the given PK
 	 *
 	 * @param id
-     * @return 200 or 404 
-     */
-    @GetMapping("/{id}")
-    protected ResponseEntity<AuthorsDTO> findById(@PathVariable int id) {
-    	logger.debug("REST : GET - findById");
-    	AuthorsDTO authorsDTO = service.findById(id);
-		if ( authorsDTO != null ) {
+	 * @return 200 or 404
+	 */
+	@GetMapping("/{id}")
+	protected ResponseEntity<AuthorsDTO> findById(@PathVariable Long id) {
+		logger.debug("REST : GET - findById");
+		AuthorsDTO authorsDTO = service.findById(id);
+		if (authorsDTO != null) {
 			return ResponseEntity.ok(authorsDTO); // 200 OK, found
-		}
-		else {
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found
-		}		
-    }
+		}
+	}
 
-    
 	/**
- 	 * Create if doesn't exist 
+	 * Create if doesn't exist
 	 *
 	 * @param authorsDTO
 	 * @return 201 created or 409 conflict
 	 */
 	@PostMapping("")
 	protected ResponseEntity<Void> create(@RequestBody AuthorsDTO authorsDTO) {
-    	logger.debug("REST : POST - create");
-		if ( service.create(authorsDTO) ) {
+		logger.debug("REST : POST - create");
+		if (service.create(authorsDTO)) {
 			return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 created
-		}
-		else {
+		} else {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict
 		}
 	}
@@ -98,60 +97,57 @@ public class AuthorsRestController {
 	 * @return 200 updated or created
 	 */
 	@PutMapping("/{id}")
-	protected ResponseEntity<Void> save(@PathVariable int id, @RequestBody AuthorsDTO authorsDTO) {
-    	logger.debug("REST : PUT - save");
+	protected ResponseEntity<Void> save(@PathVariable Long id, @RequestBody AuthorsDTO authorsDTO) {
+		logger.debug("REST : PUT - save");
 		service.save(id, authorsDTO);
 		return ResponseEntity.ok().build(); // OK, updated or created
 	}
 
 	/**
- 	 * Update if exists 
+	 * Update if exists
 	 *
 	 * @param authorsDTO
 	 * @return 200 updated or 404 not found
 	 */
 	@PutMapping("")
 	protected ResponseEntity<Void> update(@RequestBody AuthorsDTO authorsDTO) {
-    	logger.debug("REST : PUT - update");
-		if ( service.update(authorsDTO) ) {
+		logger.debug("REST : PUT - update");
+		if (service.update(authorsDTO)) {
 			return ResponseEntity.ok().build(); // 200 OK, found and updated
-		}
-		else {
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found = "not updated"
 		}
 	}
 
 	/**
- 	 * Partial update for the given PK (if it exists )
+	 * Partial update for the given PK (if it exists )
 	 *
 	 * @param id
 	 * @param authorsDTO
 	 * @return 200 updated or 404 not found
 	 */
 	@PatchMapping("/{id}")
-	protected ResponseEntity<Void> partialUpdate(@PathVariable int id, @RequestBody AuthorsDTO authorsDTO) {
-    	logger.debug("REST : PATCH - partialUpdate");
-    	if ( service.partialUpdate(id, authorsDTO) ) {
-    		return ResponseEntity.ok().build(); // OK, found and updated
-    	}
-    	else {
+	protected ResponseEntity<Void> partialUpdate(@PathVariable Long id, @RequestBody AuthorsDTO authorsDTO) {
+		logger.debug("REST : PATCH - partialUpdate");
+		if (service.partialUpdate(id, authorsDTO)) {
+			return ResponseEntity.ok().build(); // OK, found and updated
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found = "not updated"
-    	}
+		}
 	}
 
 	/**
-	 * Delete by PK 
+	 * Delete by PK
 	 *
 	 * @param id
 	 * @return 204 deleted or 404 not found
 	 */
 	@DeleteMapping("/{id}")
-	protected ResponseEntity<Void> deleteById(@PathVariable int id) {
-    	logger.debug("REST : DELETE - deleteById");
-		if ( service.deleteById(id) ) {
+	protected ResponseEntity<Void> deleteById(@PathVariable Long id) {
+		logger.debug("REST : DELETE - deleteById");
+		if (service.deleteById(id)) {
 			return ResponseEntity.noContent().build(); // 204 No content = "deleted"
-		}
-		else {
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found = "not deleted"
 		}
 	}

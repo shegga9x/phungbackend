@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class AdminUserService {
   private final UserRepository userRepository;
 
-  public PagedResponse<UserResponse> getUsers(int page) {
+  public PagedResponse<UserResponse> getUser(int page) {
     Pageable pageable = PageRequest.of(page, 10);
     Page<User> users = userRepository.findAll(pageable);
     return new PagedResponse<>(users.map(UserResponse::new));

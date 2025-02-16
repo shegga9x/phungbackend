@@ -17,9 +17,9 @@ public class RatingsId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // --- ENTITY KEY ATTRIBUTES
-    private int bookId;
+    private Long bookId;
 
-    private int userId;
+    private Long userId;
 
     /**
      * Constructor
@@ -34,26 +34,26 @@ public class RatingsId implements Serializable {
      * @param bookId
      * @param userId
      */
-    public RatingsId(Integer bookId, Integer userId) {
+    public RatingsId(Long bookId, Long userId) {
         super();
         this.bookId = bookId;
         this.userId = userId;
     }
 
     // --- GETTERS & SETTERS FOR KEY FIELDS
-    public void setBookId(int value) {
+    public void setBookId(Long value) {
         this.bookId = value;
     }
 
-    public int getBookId() {
+    public Long getBookId() {
         return this.bookId;
     }
 
-    public void setUserId(int value) {
+    public void setUserId(Long value) {
         this.userId = value;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
@@ -73,19 +73,6 @@ public class RatingsId implements Serializable {
         if (userId != other.userId)
             return false;
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-
-        // --- Attribute bookId
-        result = prime * result + bookId;
-        // --- Attribute userId
-        result = prime * result + userId;
-
-        return result;
     }
 
     @Override

@@ -21,71 +21,70 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.telosys.rest.dto.UsersDTO;
-import com.example.backend.telosys.rest.services.UsersService;
+import com.example.backend.telosys.rest.dto.UserDTO;
+import com.example.backend.users.service.UserService;
+import com.example.backend.util.Client;
 
 @RestController
-@RequestMapping(value = "/api/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsersRestController {
+@Client
+@RequestMapping(value = "/api/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
+public class UserRestController {
 
-	private static final Logger logger = LoggerFactory.getLogger(UsersRestController.class);
-	
-	private UsersService service ; // injected
-	
+	private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
+
+	private UserService service; // injected
+
 	/**
 	 * Constructor (usable for Dependency Injection)
 	 *
 	 * @param service
 	 */
-	protected UsersRestController(UsersService service) {
+	protected UserRestController(UserService service) {
 		super();
 		this.service = service;
 	}
-    
+
 	/**
 	 * Get ALL
 	 *
 	 * @return
 	 */
 	@GetMapping("")
-	protected ResponseEntity<List<UsersDTO>> findAll() {
-    	logger.debug("REST : GET - findAll");
-    	List<UsersDTO> list = service.findAll();
-    	return ResponseEntity.ok(list); // always 200
-    }
-    
-    /**
-     * Get ONE identified by the given PK
+	protected ResponseEntity<List<UserDTO>> findAll() {
+		logger.debug("REST : GET - findAll");
+		List<UserDTO> list = service.findAll();
+		return ResponseEntity.ok(list); // always 200
+	}
+
+	/**
+	 * Get ONE identified by the given PK
 	 *
 	 * @param id
-     * @return 200 or 404 
-     */
-    @GetMapping("/{id}")
-    protected ResponseEntity<UsersDTO> findById(@PathVariable int id) {
-    	logger.debug("REST : GET - findById");
-    	UsersDTO usersDTO = service.findById(id);
-		if ( usersDTO != null ) {
-			return ResponseEntity.ok(usersDTO); // 200 OK, found
-		}
-		else {
+	 * @return 200 or 404
+	 */
+	@GetMapping("/{id}")
+	protected ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+		logger.debug("REST : GET - findById");
+		UserDTO userDTO = service.findById(id);
+		if (userDTO != null) {
+			return ResponseEntity.ok(userDTO); // 200 OK, found
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found
-		}		
-    }
+		}
+	}
 
-    
 	/**
- 	 * Create if doesn't exist 
+	 * Create if doesn't exist
 	 *
-	 * @param usersDTO
+	 * @param userDTO
 	 * @return 201 created or 409 conflict
 	 */
 	@PostMapping("")
-	protected ResponseEntity<Void> create(@RequestBody UsersDTO usersDTO) {
-    	logger.debug("REST : POST - create");
-		if ( service.create(usersDTO) ) {
+	protected ResponseEntity<Void> create(@RequestBody UserDTO userDTO) {
+		logger.debug("REST : POST - create");
+		if (service.create(userDTO)) {
 			return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 created
-		}
-		else {
+		} else {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict
 		}
 	}
@@ -94,64 +93,61 @@ public class UsersRestController {
 	 * Update or create
 	 *
 	 * @param id
-	 * @param usersDTO
+	 * @param userDTO
 	 * @return 200 updated or created
 	 */
 	@PutMapping("/{id}")
-	protected ResponseEntity<Void> save(@PathVariable int id, @RequestBody UsersDTO usersDTO) {
-    	logger.debug("REST : PUT - save");
-		service.save(id, usersDTO);
+	protected ResponseEntity<Void> save(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+		logger.debug("REST : PUT - save");
+		service.save(id, userDTO);
 		return ResponseEntity.ok().build(); // OK, updated or created
 	}
 
 	/**
- 	 * Update if exists 
+	 * Update if exists
 	 *
-	 * @param usersDTO
+	 * @param userDTO
 	 * @return 200 updated or 404 not found
 	 */
 	@PutMapping("")
-	protected ResponseEntity<Void> update(@RequestBody UsersDTO usersDTO) {
-    	logger.debug("REST : PUT - update");
-		if ( service.update(usersDTO) ) {
+	protected ResponseEntity<Void> update(@RequestBody UserDTO userDTO) {
+		logger.debug("REST : PUT - update");
+		if (service.update(userDTO)) {
 			return ResponseEntity.ok().build(); // 200 OK, found and updated
-		}
-		else {
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found = "not updated"
 		}
 	}
 
 	/**
- 	 * Partial update for the given PK (if it exists )
+	 * Partial update for the given PK (if it exists )
 	 *
 	 * @param id
-	 * @param usersDTO
+	 * @param userDTO
 	 * @return 200 updated or 404 not found
 	 */
 	@PatchMapping("/{id}")
-	protected ResponseEntity<Void> partialUpdate(@PathVariable int id, @RequestBody UsersDTO usersDTO) {
-    	logger.debug("REST : PATCH - partialUpdate");
-    	if ( service.partialUpdate(id, usersDTO) ) {
-    		return ResponseEntity.ok().build(); // OK, found and updated
-    	}
-    	else {
+	protected ResponseEntity<Void> partialUpdate(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+		logger.debug("REST : PATCH - partialUpdate");
+		if (service.partialUpdate(id, userDTO)) {
+			return ResponseEntity.ok().build(); // OK, found and updated
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found = "not updated"
-    	}
+		}
 	}
 
 	/**
-	 * Delete by PK 
+	 * Delete by PK
 	 *
 	 * @param id
 	 * @return 204 deleted or 404 not found
 	 */
 	@DeleteMapping("/{id}")
-	protected ResponseEntity<Void> deleteById(@PathVariable int id) {
-    	logger.debug("REST : DELETE - deleteById");
-		if ( service.deleteById(id) ) {
+	protected ResponseEntity<Void> deleteById(@PathVariable Long id) {
+		logger.debug("REST : DELETE - deleteById");
+		if (service.deleteById(id)) {
 			return ResponseEntity.noContent().build(); // 204 No content = "deleted"
-		}
-		else {
+		} else {
 			return ResponseEntity.notFound().build(); // 404 Not found = "not deleted"
 		}
 	}

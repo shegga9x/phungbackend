@@ -48,7 +48,7 @@ public class AuthorsService extends GenericService<Authors, AuthorsDTO> {
 	 * @param dto
 	 * @return
 	 */
-	private Integer getEntityId(AuthorsDTO dto) {
+	private Long getEntityId(AuthorsDTO dto) {
 		return dto.getId();
 	}
 
@@ -69,8 +69,8 @@ public class AuthorsService extends GenericService<Authors, AuthorsDTO> {
 	 * @param id 
 	 * @return the entity or null if not found
 	 */
-	public AuthorsDTO findById(int id) {
-		Integer entityId = id;
+	public AuthorsDTO findById(Long id) {
+		Long entityId = id;
 		logger.debug("findById({})", entityId);
 		Optional<Authors> optionalEntity = repository.findById(entityId);
 		return entityToDto(optionalEntity);
@@ -83,8 +83,8 @@ public class AuthorsService extends GenericService<Authors, AuthorsDTO> {
 	 * @param id 
 	 * @param dto 
 	 */
-	public void save(int id, AuthorsDTO dto) {
-		Integer entityId = id;
+	public void save(Long id, AuthorsDTO dto) {
+		Long entityId = id;
 		logger.debug("save({},{})", entityId, dto);
 		// force PK in DTO (just to be sure to conform with the given PK) 
 		dto.setId(id);
@@ -114,8 +114,8 @@ public class AuthorsService extends GenericService<Authors, AuthorsDTO> {
 	 * @param dto
 	 * @return true if updated, false if not found
 	 */
-	public boolean partialUpdate(int id, AuthorsDTO dto) {
-		Integer entityId = id;
+	public boolean partialUpdate(Long id, AuthorsDTO dto) {
+		Long entityId = id;
 		logger.debug("partialUpdate({}, {})", entityId, dto);
 		Optional<Authors> optionalEntity = repository.findById(entityId);
 		if (optionalEntity.isPresent()) {
@@ -149,8 +149,8 @@ public class AuthorsService extends GenericService<Authors, AuthorsDTO> {
 	 * @param id 
 	 * @return true if deleted, false if not found
 	 */
-	public boolean deleteById(int id) {
-		Integer entityId = id;
+	public boolean deleteById(Long id) {
+		Long entityId = id;
 		logger.debug("deleteById({})", entityId);
 		if (repository.existsById(entityId)) {
 			repository.deleteById(entityId);

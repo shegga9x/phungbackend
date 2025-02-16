@@ -13,9 +13,14 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.modelmapper.convention.MatchingStrategies;
 
+import com.example.backend.telosys.persistence.entities.Books;
+import com.example.backend.telosys.persistence.entities.Orders;
 import com.example.backend.telosys.persistence.entities.Ratings;
+import com.example.backend.telosys.rest.dto.BooksDTO;
 import com.example.backend.telosys.rest.dto.BooksResponseDTO;
+import com.example.backend.telosys.rest.dto.OrdersDTO;
 import com.example.backend.telosys.rest.dto.RatingsDTO;
 
 /**
@@ -51,9 +56,12 @@ public abstract class GenericService<ENTITY, DTO> {
 	 * @param dto
 	 * @return
 	 */
+
 	protected ENTITY dtoToEntity(DTO dto) {
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
 		return mapper.map(dto, entityClass);
-		// return BookMapper.getInstance().dtoToEntity(dto);
+
 	}
 
 	/**
@@ -63,6 +71,8 @@ public abstract class GenericService<ENTITY, DTO> {
 	 * @return
 	 */
 	protected DTO entityToDto(ENTITY entity) {
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
 		return mapper.map(entity, dtoClass);
 		// return BookMapper.getInstance().entityToDto(entity);
 	}
@@ -77,7 +87,7 @@ public abstract class GenericService<ENTITY, DTO> {
 		mapper.addMappings(new PropertyMap<Ratings, RatingsDTO>() {
 			@Override
 			protected void configure() {
-				map(source.getUsers(), destination.getUser());
+				map(source.getUser(), destination.getUser());
 			}
 		});
 
@@ -121,7 +131,7 @@ public abstract class GenericService<ENTITY, DTO> {
 		for (Object[] row : objects) {
 			BooksResponseDTO dto = new BooksResponseDTO();
 			if (row.length >= 8) {
-				dto.setId((int) row[0]);
+				dto.setId((Long) row[0]);
 				dto.setTitle((String) row[1]);
 				dto.setType((String) row[2]);
 				Timestamp sqlTime = (Timestamp) row[3];

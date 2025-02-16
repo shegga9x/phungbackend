@@ -23,7 +23,7 @@ import com.example.backend.telosys.persistence.entities.Authors;
  * @author Telosys
  *
  */
-public interface AuthorsRepository extends JpaRepository<Authors, Integer> {
+public interface AuthorsRepository extends JpaRepository<Authors, Long> {
 
 	// Insert specific finders here 
 

@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.example.backend.util.Client;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
+@Client
 @Table(name = "books", catalog = "starter-kit-db")
 public class Books implements Serializable {
 
@@ -31,7 +34,7 @@ public class Books implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Long id;
 
     // --- OTHER DATA FIELDS
     @Column(name = "title", nullable = false, length = 100)
@@ -56,7 +59,7 @@ public class Books implements Serializable {
         super();
     }
 
-    public Books(int id, String title, String type, LocalDateTime publishedAt, int stock, BigDecimal price) {
+    public Books(Long id, String title, String type, LocalDateTime publishedAt, int stock, BigDecimal price) {
         super();
         this.id = id;
         this.title = title;
@@ -66,11 +69,11 @@ public class Books implements Serializable {
         this.price = price;
     };
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

@@ -27,8 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.telosys.rest.dto.BooksDTO;
 import com.example.backend.telosys.rest.dto.BooksResponseDTO;
 import com.example.backend.telosys.rest.services.BooksService;
+import com.example.backend.util.Client;
 
 @RestController
+@Client
 @RequestMapping(value = "/api/v1/books", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BooksRestController {
 
@@ -85,7 +87,7 @@ public class BooksRestController {
 	 * @return 200 or 404
 	 */
 	@GetMapping("/{id}")
-	protected ResponseEntity<BooksDTO> findById(@PathVariable int id) {
+	protected ResponseEntity<BooksDTO> findById(@PathVariable Long id) {
 		logger.debug("REST : GET - findById");
 		BooksDTO booksDTO = service.findById(id);
 		if (booksDTO != null) {
@@ -119,7 +121,7 @@ public class BooksRestController {
 	 * @return 200 updated or created
 	 */
 	@PutMapping("/{id}")
-	protected ResponseEntity<Void> save(@PathVariable int id, @RequestBody BooksDTO booksDTO) {
+	protected ResponseEntity<Void> save(@PathVariable Long id, @RequestBody BooksDTO booksDTO) {
 		logger.debug("REST : PUT - save");
 		service.save(id, booksDTO);
 		return ResponseEntity.ok().build(); // OK, updated or created
@@ -149,7 +151,7 @@ public class BooksRestController {
 	 * @return 200 updated or 404 not found
 	 */
 	@PatchMapping("/{id}")
-	protected ResponseEntity<Void> partialUpdate(@PathVariable int id, @RequestBody BooksDTO booksDTO) {
+	protected ResponseEntity<Void> partialUpdate(@PathVariable Long id, @RequestBody BooksDTO booksDTO) {
 		logger.debug("REST : PATCH - partialUpdate");
 		if (service.partialUpdate(id, booksDTO)) {
 			return ResponseEntity.ok().build(); // OK, found and updated
@@ -165,7 +167,7 @@ public class BooksRestController {
 	 * @return 204 deleted or 404 not found
 	 */
 	@DeleteMapping("/{id}")
-	protected ResponseEntity<Void> deleteById(@PathVariable int id) {
+	protected ResponseEntity<Void> deleteById(@PathVariable Long id) {
 		logger.debug("REST : DELETE - deleteById");
 		if (service.deleteById(id)) {
 			return ResponseEntity.noContent().build(); // 204 No content = "deleted"
