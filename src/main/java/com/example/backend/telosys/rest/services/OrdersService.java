@@ -5,6 +5,7 @@
 package com.example.backend.telosys.rest.services;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,18 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.ghn.GHNService;
 import com.example.backend.telosys.persistence.entities.Orders;
-import com.example.backend.telosys.persistence.repositories.BooksRepository;
 import com.example.backend.telosys.persistence.repositories.OrdersRepository;
 import com.example.backend.telosys.rest.dto.BooksDTO;
+import com.example.backend.telosys.rest.dto.CartItemDTO;
+import com.example.backend.telosys.rest.dto.OrderRequest;
 import com.example.backend.telosys.rest.dto.OrdersDTO;
 import com.example.backend.telosys.rest.dto.OrdersResponseDTO;
 import com.example.backend.telosys.rest.dto.UserDTO;
 import com.example.backend.telosys.rest.services.commons.GenericService;
-import com.example.backend.users.repository.UserRepository;
 import com.example.backend.users.service.UserService;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * REST service for entity "Orders" <br>
@@ -40,22 +40,27 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 	private static final Logger logger = LoggerFactory.getLogger(OrdersService.class);
 
 	private final OrdersRepository repository; // injected by constructor
-
 	private final BooksService booksService; // injected by constructor
 	private final UserService usersService; // injected by constructor
+	private final CartItemService cartItemService; // injected by constructor
+	private final GHNService ghnService; // injected by constructor
+
+	public OrdersService(OrdersRepository repository,
+			BooksService booksService, UserService usersService, CartItemService cartItemService,
+			GHNService ghnService) {
+		super(Orders.class, OrdersDTO.class);
+		this.repository = repository;
+		this.booksService = booksService;
+		this.usersService = usersService;
+		this.cartItemService = cartItemService;
+		this.ghnService = ghnService;
+	}
 
 	/**
 	 * Constructor (usable for Dependency Injection)
 	 * 
 	 * @param repository the repository to be injected
 	 */
-	public OrdersService(OrdersRepository repository, BooksRepository booksRepository, UserRepository uRepository,
-			BooksService booksService, UserService usersService) {
-		super(Orders.class, OrdersDTO.class);
-		this.repository = repository;
-		this.booksService = booksService;
-		this.usersService = usersService;
-	}
 
 	/**
 	 * Returns the entity ID object from the given DTO
@@ -175,40 +180,60 @@ public class OrdersService extends GenericService<Orders, OrdersDTO> {
 		}
 	}
 
-	/**
-	 * Buys a book by creating an order
-	 *
-	 * @param dto
-	 * @return the created order
-	 */
-	@Transactional
-	public OrdersResponseDTO buyBook(OrdersDTO dto) {
-		BooksDTO book = booksService.findById(dto.getBookId());
+	public BooksDTO checkOut(List<OrdersDTO> orderDtos, CartItemDTO cartItemDTO,
+			Long userId) throws Exception {
+		BooksDTO book = booksService.findById(cartItemDTO.getBookId());
 		if (book == null) {
-			throw new IllegalArgumentException("Book not found");
+			throw new Exception("Book not found");
 		}
-		if (book.getStock() < dto.getQuality()) {
-			throw new IllegalArgumentException("Not enough stock");
+		if (book.getStock() < cartItemDTO.getQuantity()) {
+			throw new Exception("Not enough stock");
 		}
-		BigDecimal cost = book.getPrice().multiply(BigDecimal.valueOf(dto.getQuality()));
-		UserDTO user = usersService.findById(dto.getUserId());
+		book.setStock(book.getStock() - cartItemDTO.getQuantity());
+		OrdersDTO orderDto = new OrdersDTO(cartItemDTO.getBookId(), userId, cartItemDTO.getQuantity());
+		orderDtos.add(orderDto);
+		return book;
+	}
+
+	public OrdersResponseDTO buyBook(OrderRequest orderRequest) {
+		Long bookId = orderRequest.getBookId();
+		Long userId = orderRequest.getUserId();
+		int serviceId = orderRequest.getServiceId();
+		BigDecimal cost = BigDecimal.ZERO;
+		BigDecimal remain = BigDecimal.ZERO;
+		List<OrdersDTO> orderDtos = new ArrayList<>();
+		List<CartItemDTO> cartItemDTOs = new ArrayList<>();
+		List<BooksDTO> booksDTOs = new ArrayList<>();
+		if (bookId == null)
+			cartItemDTOs = cartItemService.findByUserIdDTO(userId);
+		else
+			cartItemDTOs.add(cartItemService.findById(bookId, userId));
+		double shippingFee = ghnService.getFee(serviceId, bookId + "", userId).getTotal() / 25000;
+		for (CartItemDTO cartItemDTO : cartItemDTOs) {
+			try {
+				BooksDTO booksDTO = checkOut(orderDtos, cartItemDTO, userId);
+				cost = cost.add(booksDTO.getPrice().multiply(BigDecimal.valueOf(cartItemDTO.getQuantity())));
+				booksDTOs.add(booksDTO);
+			} catch (Exception e) {
+				return new OrdersResponseDTO(e.getMessage(), 404);
+			}
+		}
+		cost = cost.add(BigDecimal.valueOf(shippingFee));
+		UserDTO user = usersService.findById(userId);
 		if (user.getBalance().compareTo(cost) < 0) {
-			throw new IllegalArgumentException("Not enough balance");
+			return new OrdersResponseDTO("Not enough balance", 404);
 		}
-		BigDecimal remain = user.getBalance().subtract(cost);
+		remain = user.getBalance().subtract(cost);
 		user.setBalance(remain);
-		book.setStock(book.getStock() - dto.getQuality());
 		try {
-			booksService.update(book);
 			usersService.update(user);
+			booksService.saveAll(booksDTOs);
+			cartItemService.deleteByList(cartItemDTOs);
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to update book or user", e);
+			return new OrdersResponseDTO("Failed to update user", 404);
 		}
-		
-		Orders order = dtoToEntity(dto);
-		Orders savedOrder = repository.save(order);
-		OrdersResponseDTO ordersResponseDTO = new OrdersResponseDTO(entityToDto(savedOrder), cost, remain);
-		return ordersResponseDTO;
+		repository.saveAll(dtoListToEntityList(orderDtos));
+		return new OrdersResponseDTO(orderDtos, cost, remain, "Success", 200);
 	}
 }
 // -----------------------------------------------------------------------------------------

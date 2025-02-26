@@ -35,7 +35,7 @@ public class Authors implements Serializable {
     private Long id;
 
     // --- OTHER DATA FIELDS
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
     @Column(name = "gender")

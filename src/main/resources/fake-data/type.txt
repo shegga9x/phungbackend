@@ -1,0 +1,243 @@
+Magazine
+Novel
+Life
+Arts
+Comics
+Education & Reference
+Humanities & Social Sciences
+Science & Technology
+Kids
+Sports
+.NET Framework
+3D
+ActionScript
+Active Directory
+Administration
+Agile
+Ajax
+Algorithms
+Amazon Kindle Fire
+Analytics
+Android
+Angular
+AngularJS
+Ansible
+Apache
+Apache Camel
+Apache Cassandra
+Apache Kafka
+Apache Spark
+API
+App Store
+Arduino
+ASP
+ASP.NET
+Assembler
+Audio
+AutoCAD
+AWS
+Backbone
+bash
+Basic
+Big Data
+Bitcoin
+Blockchain
+Bootstrap
+BSD
+Business
+C#
+C++
+Cisco
+Citrix
+Clojure
+Cloud
+Cocoa
+Cocos2D
+CouchDB
+CSS
+CSS3
+Cucumber
+Dart
+Data Science
+Database
+Delphi
+Design
+DevOps
+Django
+Docker
+Dojo
+DOM
+Drupal
+Eclipse
+EJB
+Elixir
+Erlang
+Ethereum
+F#
+Facebook
+Fedora
+Firebug
+Flash
+Flex
+Flutter
+Fonts
+For Dummies
+Framework
+FreeBSD
+Games Development
+GIMP
+GIS
+Git
+Go
+Google
+Grails Framework
+Graph
+Groovy
+Hack
+Hacking
+Hadoop
+Haskell
+Head First
+Hibernate
+Hive
+HTML
+HTML5
+Hyper-V
+IaaS
+IBM
+IDE
+IIS
+In Action
+InDesign
+Internet of Things
+iOS
+iPad
+iPhone
+Java
+JavaFX
+JavaScript
+Jenkins
+JIRA
+Joomla
+jQuery
+JSON
+Julia
+Juniper
+Knockout
+Kotlin
+Kubernetes
+LaTeX
+LEGO
+Linux
+Lisp
+Lua
+Mac
+Machine Learning
+MapReduce
+MariaDB
+MATLAB
+Media
+Microsoft
+Microsoft Access
+Microsoft Azure
+Microsoft Excel
+Microsoft Office
+Microsoft Power BI
+Microsoft Word
+Mobile
+MongoDB
+Munin
+MVC
+MySQL
+Nagios
+NetBeans
+Network
+Neural Networks
+Nginx
+Node
+Node.js
+NoSQL
+NumPy
+Nutshell
+Objective-C
+OpenBSD
+OpenGL
+Optimization
+Oracle
+Outlook
+PaaS
+Panda3D
+Patterns
+Perl
+Phone Development
+PhoneGap
+Photoshop
+PHP
+PlayStation
+PostgreSQL
+PowerShell
+Programming
+Project
+Python
+Qt
+RabbitMQ
+Rails
+Raspberry Pi
+React
+Redis
+Redmine
+Regular Expressions
+Ruby
+Ruby on Rails
+Rust
+Sams Teach Yourself
+SAP
+Sass
+Scala
+SDK
+Security
+SEO
+Server
+SharePoint
+Shell
+Silverlight
+SOA
+SOAP
+Software
+Solaris
+Sphinx
+Splunk
+Spring
+SQL
+Subversion
+Swift
+TensorFlow
+Testing
+Titanium
+Training Kit
+Tuning
+Twitter
+TypeScript
+Ubuntu
+UML
+Unity
+Unix
+VB
+VBA
+Visual Basic
+Visual Studio
+Visualization
+VMM
+Vue.js
+WebGL
+WebSocket
+Wi-Fi
+Wii
+Windows
+WordPress
+WPF
+XAML
+Xbox
+Xcode
+XML
+Yahoo

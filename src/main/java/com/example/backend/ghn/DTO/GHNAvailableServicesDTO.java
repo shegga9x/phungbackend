@@ -1,8 +1,19 @@
 package com.example.backend.ghn.DTO;
 
+import com.example.backend.util.Client;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@Client
 public class GHNAvailableServicesDTO {
+    @JsonAlias("service_id")
+    @JsonProperty("serviceId")
     private int serviceId;
+    @JsonAlias("short_name")
+    @JsonProperty("shortName")
     private String shortName;
+    @JsonAlias("service_type_id")
+    @JsonProperty("serviceTypeId")
     private int serviceTypeId;
 
     // Getters and Setters

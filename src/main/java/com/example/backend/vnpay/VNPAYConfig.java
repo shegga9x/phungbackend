@@ -15,11 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class VNPAYConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_Returnurl = "/vnpay-payment-return";
+    public static String vnp_Returnurl = "http://localhost:8081/api/v1/vnp/vnpay-payment-return";
     public static String vnp_TmnCode = "T585JMXL";
     public static String vnp_HashSecret = "NUD2NHAGKKKMEVLO1NPRID1U72XZXV77";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);

@@ -10,44 +10,29 @@ FROM books A
 LEFT OUTER JOIN book_authors B ON A.id = B.book_id 
 LEFT OUTER JOIN authors D ON B.author_id = D.id
 LEFT OUTER JOIN ratings C ON A.id = C.book_id 
-where A.`type` = 'Novel'
 GROUP BY A.id,A.title
 ORDER BY A.price; 
 
 SELECT COUNT(*)
-FROM (
-    SELECT A.title, GROUP_CONCAT(DISTINCT D.name SEPARATOR ', ') AS listAuthors, AVG(C.score) AS avg_score
-    FROM books A
-    LEFT OUTER JOIN book_authors B ON A.id = B.book_id 
-    LEFT OUTER JOIN authors D ON B.author_id = D.id
-    LEFT OUTER JOIN ratings C ON A.id = C.book_id 
-    GROUP BY A.title
-)   AS subquery;
+FROM books A
+WHERE (EXISTS (SELECT 1 FROM book_authors B WHERE A.id = B.book_id)  
+       OR EXISTS (SELECT 1 FROM ratings C WHERE A.id = C.book_id))  
+  AND A.`type` = 'book';
 
+SELECT A.*, authors.listAuthors, ratings.avg_score
+FROM books A
+LEFT JOIN (
+    SELECT B.book_id, GROUP_CONCAT(DISTINCT D.name SEPARATOR ', ') AS listAuthors
+    FROM book_authors B
+    JOIN authors D ON B.author_id = D.id
+    GROUP BY B.book_id
+) authors ON A.id = authors.book_id
+LEFT JOIN (
+    SELECT C.book_id, AVG(C.score) AS avg_score
+    FROM ratings C
+    GROUP BY C.book_id
+) ratings ON A.id = ratings.book_id
+WHERE A.id > (SELECT id FROM books ORDER BY price LIMIT 1 OFFSET 6)
+ORDER BY A.price
+LIMIT 6;
 
-
-{
-            "from_district_id":1454,
-            "from_ward_code":"21211",
-            "service_id":53320,
-            "service_type_id":null,
-            "to_district_id":1452,
-            "to_ward_code":"21012",
-            "height":50,
-            "length":20,
-            "weight":200,
-            "width":20,
-            "insurance_value":10000,
-            "cod_failed_amount":2000,
-            "coupon": null
-            "items": [
-                {
-                  "name": "TEST1",
-                  "quantity": 1,
-                  "height": 200,
-                  "weight": 1000,
-                  "length": 200,
-                  "width": 200
-                }
-              ]
-            }

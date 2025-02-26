@@ -85,7 +85,7 @@ public class RatingsService extends GenericService<Ratings, RatingsDTO> {
 	 * @param userId
 	 * @return the entity or null if not found
 	 */
-	public List<RatingsDTO> findByBookId(int bookId) {
+	public List<RatingsDTO> findByBookId(Long bookId) {
 		// RatingsId entityId = new RatingsId(bookId, userId);
 		logger.debug("findById({})");
 		List<Ratings> optionalEntity = repository.findByBookId(bookId);

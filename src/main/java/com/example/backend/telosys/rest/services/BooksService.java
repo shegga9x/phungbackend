@@ -95,6 +95,17 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	}
 
 	/**
+	 * Saves all given entities
+	 *
+	 * @param dtos
+	 */
+	public void saveAll(List<BooksDTO> dtos) {
+		logger.debug("saveAll({})", dtos);
+		List<Books> entities = dtoListToEntityList(dtos);
+		repository.saveAll(entities);
+	}
+
+	/**
 	 * Updates the given entity if it exists
 	 *
 	 * @param dto

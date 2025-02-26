@@ -15,13 +15,10 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
 
-import com.example.backend.telosys.persistence.entities.Books;
-import com.example.backend.telosys.persistence.entities.Orders;
 import com.example.backend.telosys.persistence.entities.Ratings;
-import com.example.backend.telosys.rest.dto.BooksDTO;
 import com.example.backend.telosys.rest.dto.BooksResponseDTO;
-import com.example.backend.telosys.rest.dto.OrdersDTO;
 import com.example.backend.telosys.rest.dto.RatingsDTO;
+import com.example.backend.users.User;
 
 /**
  * Abstract class for REST services <br>
@@ -58,9 +55,26 @@ public abstract class GenericService<ENTITY, DTO> {
 	 */
 
 	protected ENTITY dtoToEntity(DTO dto) {
+
 		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		return mapper.map(dto, entityClass);
+
+	}
+
+	/**
+	 * Converts DTO to JPA ENTITY
+	 * 
+	 * @param dto
+	 * @return
+	 */
+
+	protected User dtoToEntity(DTO dto, User user) {
+
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		mapper.map(dto, user);
+		return user;
 
 	}
 
@@ -125,6 +139,22 @@ public abstract class GenericService<ENTITY, DTO> {
 		return dtoList;
 	}
 
+	/**
+	 * Converts a collection of DTO to a collection of JPA ENTITIES
+	 * 
+	 * @param dtoList
+	 * @return
+	 */
+	protected List<ENTITY> dtoListToEntityList(Iterable<DTO> dtoList) {
+		List<ENTITY> entityList = new LinkedList<>();
+		if (dtoList != null) {
+			for (DTO dto : dtoList) {
+				entityList.add(dtoToEntity(dto));
+			}
+		}
+		return entityList;
+	}
+
 	protected List<BooksResponseDTO> mapObjectArrayToDTO(List<Object[]> objects) {
 		List<BooksResponseDTO> result = new ArrayList<>();
 
@@ -133,14 +163,14 @@ public abstract class GenericService<ENTITY, DTO> {
 			if (row.length >= 8) {
 				dto.setId((Long) row[0]);
 				dto.setTitle((String) row[1]);
-				dto.setType((String) row[2]);
 				Timestamp sqlTime = (Timestamp) row[3];
 				sqlTime.toLocalDateTime().toLocalDate();
 				dto.setPublishedAt(sqlTime.toLocalDateTime());
 				dto.setStock((Integer) row[4]);
 				dto.setPrice((BigDecimal) row[5]);
-				dto.setAuthors(((String) row[6]).split(","));
-				dto.setAverageRating((BigDecimal) row[7]);
+				dto.setAuthors(row[7] != null ? ((String) row[7]).split(",") : new String[] { "" });
+				dto.setType((String) row[2]);
+				dto.setAverageRating(row[8] != null ? (BigDecimal) row[8] : BigDecimal.ZERO);
 			}
 
 			result.add(dto);

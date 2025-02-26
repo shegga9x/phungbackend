@@ -6,6 +6,7 @@ package com.example.backend.telosys.rest.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -15,24 +16,32 @@ import java.math.BigDecimal;
  *
  */
 public class OrdersResponseDTO implements Serializable {
-    private OrdersDTO orderDTO;
+    private List<OrdersDTO> ordersDTO;
     private BigDecimal cost;
     private BigDecimal remain;
+    private String message;
+    private int status;
 
-    
+    public OrdersResponseDTO(String message, int status) {
+        this.message = message;
+        this.status = status;
+    }
 
-    public OrdersResponseDTO(OrdersDTO orderDTO, BigDecimal cost, BigDecimal remain) {
-        this.orderDTO = orderDTO;
+    public OrdersResponseDTO(List<OrdersDTO> ordersDTO, BigDecimal cost, BigDecimal remain, String message,
+            int status) {
+        this.ordersDTO = ordersDTO;
         this.cost = cost;
         this.remain = remain;
+        this.message = message;
+        this.status = status;
     }
 
-    public OrdersDTO getOrderDTO() {
-        return orderDTO;
+    public int getStatus() {
+        return status;
     }
 
-    public void setOrderDTO(OrdersDTO orderDTO) {
-        this.orderDTO = orderDTO;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public BigDecimal getCost() {
@@ -49,6 +58,22 @@ public class OrdersResponseDTO implements Serializable {
 
     public void setRemain(BigDecimal remain) {
         this.remain = remain;
+    }
+
+    public List<OrdersDTO> getOrdersDTO() {
+        return ordersDTO;
+    }
+
+    public void setOrdersDTO(List<OrdersDTO> ordersDTO) {
+        this.ordersDTO = ordersDTO;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

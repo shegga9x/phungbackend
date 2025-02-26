@@ -4,6 +4,8 @@ import com.example.backend.users.Role;
 import com.example.backend.users.User;
 import com.example.backend.util.Client;
 import jakarta.annotation.Nullable;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,11 +23,11 @@ public class UserResponse {
   @Nullable
   private String lastName;
   private String email;
+  private BigDecimal balance;
   @Nullable
   private String profileImageUrl;
   private List<ConnectedAccountResponse> connectedAccounts = new ArrayList<>();
   private List<String> authorities = new ArrayList<>();
-
   public UserResponse(User user) {
     this.id = user.getId();
     this.role = user.getRole();
@@ -33,6 +35,7 @@ public class UserResponse {
     this.lastName = user.getLastName();
     this.email = user.getEmail();
     this.profileImageUrl = user.getProfileImageUrl();
+    this.balance = user.getBalance();
     user.getConnectedAccounts().forEach((provider) -> {
       this.connectedAccounts.add(new ConnectedAccountResponse(provider.getProvider(), provider.getConnectedAt()));
     });
@@ -45,6 +48,7 @@ public class UserResponse {
     this.lastName = user.getLastName();
     this.email = user.getEmail();
     this.profileImageUrl = user.getProfileImageUrl();
+    this.balance = user.getBalance();
     user.getConnectedAccounts().forEach((provider) -> {
       this.connectedAccounts.add(new ConnectedAccountResponse(provider.getProvider(), provider.getConnectedAt()));
     });

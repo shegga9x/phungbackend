@@ -37,7 +37,7 @@ public class Books implements Serializable {
     private Long id;
 
     // --- OTHER DATA FIELDS
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
     @Column(name = "type", nullable = false, length = 28)
@@ -52,6 +52,12 @@ public class Books implements Serializable {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    @Column(name = "subtitle", nullable = false)
+    private String subtitle;
+
+    @Column(name = "url_img", length = 100)
+    private String urlImg;
+
     /**
      * Constructor
      */
@@ -59,77 +65,83 @@ public class Books implements Serializable {
         super();
     }
 
-    public Books(Long id, String title, String type, LocalDateTime publishedAt, int stock, BigDecimal price) {
-        super();
+    public Books(Long id, String title, String type, LocalDateTime publishedAt, int stock, BigDecimal price,
+            String subtitle) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.publishedAt = publishedAt;
         this.stock = stock;
         this.price = price;
-    };
+        this.subtitle = subtitle;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId() {
-        return this.id;
+    public String getTitle() {
+        return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getTitle() {
-        return this.title;
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
         this.type = type;
     }
 
-    public String getType() {
-        return this.type;
+    public LocalDateTime getPublishedAt() {
+        return publishedAt;
     }
 
     public void setPublishedAt(LocalDateTime publishedAt) {
         this.publishedAt = publishedAt;
     }
 
-    public LocalDateTime getPublishedAt() {
-        return this.publishedAt;
+    public int getStock() {
+        return stock;
     }
 
     public void setStock(int stock) {
         this.stock = stock;
     }
 
-    public int getStock() {
-        return this.stock;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public BigDecimal getPrice() {
-        return this.price;
+    public String getSubtitle() {
+        return subtitle;
     }
 
-    @Override
-    public String toString() {
-        String separator = "|";
-        StringBuilder sb = new StringBuilder();
-        sb.append("Books[");
-        sb.append("id=").append(id);
-        sb.append(separator).append("title=").append(title);
-        sb.append(separator).append("type=").append(type);
-        sb.append(separator).append("publishedAt=").append(publishedAt);
-        sb.append(separator).append("stock=").append(stock);
-        sb.append(separator).append("price=").append(price);
-        sb.append("]");
-        return sb.toString();
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
+
+    public String getUrlImg() {
+        return urlImg;
+    }
+
+    public void setUrlImg(String urlImg) {
+        this.urlImg = urlImg;
     }
 
 }

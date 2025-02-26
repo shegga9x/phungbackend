@@ -62,7 +62,7 @@ public class RatingsRestController {
 	 * @return
 	 */
 	@GetMapping("/{bookId}")
-	protected ResponseEntity<List<RatingsDTO>> findByBookId(@PathVariable int bookId) {
+	protected ResponseEntity<List<RatingsDTO>> findByBookId(@PathVariable Long bookId) {
 		logger.debug("REST : GET - findByBookId");
 		List<RatingsDTO> list = service.findByBookId(bookId);
 		return ResponseEntity.ok(list); // always 200

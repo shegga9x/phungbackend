@@ -23,8 +23,7 @@ public class AdminUserController {
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<PagedResponse<UserResponse>> admin_getUser(
-      @RequestParam(value = "page", defaultValue = "0") int page
-  ) {
+      @RequestParam(value = "page", defaultValue = "0") int page) {
     PagedResponse<UserResponse> users = userService.getUser(page);
     return ResponseEntity.ok(users);
   }

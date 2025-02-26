@@ -4,18 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.ghn.DTO.GHNDistrictDTO;
 import com.example.backend.ghn.DTO.GHNFeeResponseDTO;
-import com.example.backend.ghn.DTO.GHNFeeResquestDTO;
 import com.example.backend.ghn.DTO.GHNAvailableServicesDTO;
 import com.example.backend.ghn.DTO.GHNProvinceDTO;
-import com.example.backend.ghn.DTO.GHNResponseDTO;
 import com.example.backend.ghn.DTO.GHNWardDTO;
 import com.example.backend.util.Client;
 
@@ -43,14 +39,12 @@ public class GHNController {
 
     @GetMapping("/available-services")
     public List<GHNAvailableServicesDTO> getAvailableServices(
-            @RequestParam("shop_id") int shop_id,
-            @RequestParam("from_district") int from_district,
-            @RequestParam("to_district") int to_district) {
-        return gHNService.getAvailableServices(shop_id, from_district, to_district);
+            @RequestParam("user_id") Long user_id) {
+        return gHNService.getAvailableServices(user_id);
     };
 
-    @PostMapping("/fee")
-    GHNFeeResponseDTO getFee(@RequestBody GHNFeeResquestDTO gHNFeeResquest) {
-        return gHNService.getFee(gHNFeeResquest);
+    @GetMapping("/fee")
+    GHNFeeResponseDTO getFee(@RequestParam String bookId, @RequestParam int service_id, @RequestParam Long userId) {
+        return gHNService.getFee(service_id, bookId, userId);
     }
 }

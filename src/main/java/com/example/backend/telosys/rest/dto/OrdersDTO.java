@@ -17,78 +17,99 @@ public class OrdersDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
-    private Long id ;
-    //--- OTHER DATA FIELDS 
-    private Long bookId ;
-    private Long userId ;
-    private byte quality ;
-    private LocalDateTime orderedAt ;
-    //--- LINKS ( RELATIONSHIPS )
-    private BooksDTO books ; 
-    private UserDTO users ; 
+    // --- PRIMARY KEY
+    private Long id;
+    // --- OTHER DATA FIELDS
+    private Long bookId;
+    private Long userId;
+    private int quantity;
+    private LocalDateTime orderedAt;
+    // --- LINKS ( RELATIONSHIPS )
+    private BooksDTO books;
+    private UserDTO users;
 
     /**
      * Constructor
      */
     public OrdersDTO() {
-		super();
+        super();
     }
-    
-    public void setId( Long id ) {
-        this.id = id ;
+
+    public OrdersDTO(Long bookId, Long userId, int quantity) {
+        this.bookId = bookId;
+        this.userId = userId;
+        this.quantity = quantity;
+        this.orderedAt = LocalDateTime.now();
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return this.id;
     }
 
-    public void setBookId( Long bookId ) {
-        this.bookId = bookId ;
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
     }
+
     public Long getBookId() {
         return this.bookId;
     }
 
-    public void setUserId( Long userId ) {
-        this.userId = userId ;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
+
     public Long getUserId() {
         return this.userId;
     }
 
-    public void setQuality( byte quality ) {
-        this.quality = quality ;
-    }
-    public byte getQuality() {
-        return this.quality;
+    public void setOrderedAt(LocalDateTime orderedAt) {
+        this.orderedAt = orderedAt;
     }
 
-    public void setOrderedAt( LocalDateTime orderedAt ) {
-        this.orderedAt = orderedAt ;
-    }
     public LocalDateTime getOrderedAt() {
         return this.orderedAt;
     }
 
     public BooksDTO getBooks() {
         return this.books;
-    } 
+    }
 
     public UserDTO getUser() {
         return this.users;
-    } 
+    }
 
-	@Override
-	public String toString() { 
-		String separator = "|";
-		StringBuilder sb = new StringBuilder();
-		sb.append("Orders[");
-		sb.append("id=").append(id);
-		sb.append(separator).append("bookId=").append(bookId);
-		sb.append(separator).append("userId=").append(userId);
-		sb.append(separator).append("quality=").append(quality);
-		sb.append(separator).append("orderedAt=").append(orderedAt);
-		sb.append("]");
-		return sb.toString();
-	}
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setBooks(BooksDTO books) {
+        this.books = books;
+    }
+
+    public UserDTO getUsers() {
+        return users;
+    }
+
+    public void setUsers(UserDTO users) {
+        this.users = users;
+    }
+
+    @Override
+    public String toString() {
+        return "OrdersDTO [id=" + id + ", bookId=" + bookId + ", userId=" + userId + ", quantity=" + quantity
+                + ", orderedAt=" + orderedAt + ", books=" + books + ", users=" + users + "]";
+    }
+
 }

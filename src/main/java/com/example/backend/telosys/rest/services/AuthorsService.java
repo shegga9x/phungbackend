@@ -90,7 +90,16 @@ public class AuthorsService extends GenericService<Authors, AuthorsDTO> {
 		dto.setId(id);
 		repository.save(dtoToEntity(dto));
 	}
-
+	/**
+	 * Saves a list of entities
+	 *
+	 * @param dtos
+	 */
+	public void saveAll(List<AuthorsDTO> dtos) {
+		logger.debug("saveList({})", dtos);
+		List<Authors> entities = dtoListToEntityList(dtos);
+		repository.saveAll(entities);
+	}
 	/**
 	 * Updates the given entity if it exists
 	 *

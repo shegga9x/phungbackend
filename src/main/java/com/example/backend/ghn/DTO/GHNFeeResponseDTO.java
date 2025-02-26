@@ -1,7 +1,10 @@
 package com.example.backend.ghn.DTO;
 
+import com.example.backend.util.Client;
+
+@Client
 public class GHNFeeResponseDTO {
-    private int total;
+    private double total;
     private int service_fee;
     private int insurance_fee;
     private int pick_station_fee;
@@ -16,11 +19,11 @@ public class GHNFeeResponseDTO {
     private int return_again;
 
     // Getters and Setters
-    public int getTotal() {
+    public double getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(double total) {
         this.total = total;
     }
 

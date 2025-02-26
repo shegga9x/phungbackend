@@ -12,7 +12,6 @@ public class BooksResponseDTO {
     private String type;
     private LocalDateTime publishedAt;
     private int stock;
-
     private BigDecimal price;
     private String[] authors;
 

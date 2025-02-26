@@ -6,7 +6,6 @@ import com.example.backend.users.data.UpdateUserRequest;
 import com.example.backend.util.ApplicationContextProvider;
 import com.example.backend.util.Client;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,12 +35,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 @Getter
 @NoArgsConstructor
 @Client
+@Setter
 public class User extends AbstractEntity implements UserDetails {
   private String email;
   private String password;
   private String firstName;
   private String lastName;
   private BigDecimal balance;
+
   @Setter
   private boolean verified = false;
   @Setter

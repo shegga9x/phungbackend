@@ -31,7 +31,7 @@ public interface RatingsRepository extends JpaRepository<Ratings, RatingsId> {
 
 	// Insert specific finders here
 
-	List<Ratings> findByBookId(int bookId);
+	List<Ratings> findByBookId(Long bookId);
 
 	// List<Ratings> findByXxxStartingWith(String xxx);
 

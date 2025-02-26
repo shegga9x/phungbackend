@@ -2,13 +2,18 @@ package com.example.backend.ghn.DTO;
 
 import java.util.List;
 
+import com.example.backend.ghn.GHNConfig;
+import com.example.backend.telosys.rest.dto.ShippingInfoDTO;
+import com.example.backend.util.Client;
+
+@Client
 public class GHNFeeResquestDTO {
     private int from_district_id;
     private String from_ward_code;
+    private String to_ward_code;
+    private int to_district_id;
     private int service_id;
     private Integer service_type_id;
-    private int to_district_id;
-    private String to_ward_code;
     private int height;
     private int length;
     private int weight;
@@ -27,39 +32,60 @@ public class GHNFeeResquestDTO {
         private int weight;
         private int length;
         private int width;
+
+        public Item(String name, int quantity) {
+            this.name = name;
+            this.quantity = quantity;
+            this.height = 27;
+            this.weight = 500;
+            this.length = 21;
+            this.width = 5;
+        }
+
         public String getName() {
             return name;
         }
+
         public void setName(String name) {
             this.name = name;
         }
+
         public int getQuantity() {
             return quantity;
         }
+
         public void setQuantity(int quantity) {
             this.quantity = quantity;
         }
+
         public int getHeight() {
             return height;
         }
+
         public void setHeight(int height) {
             this.height = height;
         }
+
         public int getWeight() {
             return weight;
         }
+
         public void setWeight(int weight) {
             this.weight = weight;
         }
+
         public int getLength() {
             return length;
         }
+
         public void setLength(int length) {
             this.length = length;
         }
+
         public int getWidth() {
             return width;
         }
+
         public void setWidth(int width) {
             this.width = width;
         }
@@ -178,5 +204,17 @@ public class GHNFeeResquestDTO {
     public void setItems(List<Item> items) {
         this.items = items;
     }
-    
+
+    public void setConfigField(ShippingInfoDTO shippingInfoDTO, int totalQuantity, int service_id2, List<Item> gHNFeeResquestDTOItem) {
+        setService_id(service_id2);
+        setFrom_district_id(GHNConfig.shop_disctrict_id);
+        setFrom_ward_code(GHNConfig.shop_ward_code + "");
+        setTo_district_id(shippingInfoDTO.getDisctrictId());
+        setTo_ward_code(shippingInfoDTO.getWardCode() + "");
+        setHeight(27);
+        setLength(21);
+        setWeight(500 * totalQuantity);
+        setWidth(5 * totalQuantity);
+        setItems(gHNFeeResquestDTOItem);
+    }
 }

@@ -1,9 +1,22 @@
 package com.example.backend.ghn.DTO;
 
+import com.example.backend.util.Client;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@Client
 public class GHNDistrictDTO {
+    @JsonAlias("DistrictID") // Accepts "ProvinceID" when receiving data
+    @JsonProperty("districtID")
     private int districtID;
+    @JsonAlias("ProvinceID") // Accepts "ProvinceID" when receiving data
+    @JsonProperty("provinceID")
     private int provinceID;
+    @JsonAlias("DistrictName") // Accepts "ProvinceID" when receiving data
+    @JsonProperty("districtName")
     private String districtName;
+    @JsonAlias("Code") // Accepts "ProvinceID" when receiving data
+    @JsonProperty("code")
     private String code;
     private int type;
     private int supportType;

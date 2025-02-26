@@ -4,7 +4,6 @@
  */
 package com.example.backend.telosys.rest.controllers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.telosys.rest.dto.OrderRequest;
 import com.example.backend.telosys.rest.dto.OrdersDTO;
 import com.example.backend.telosys.rest.dto.OrdersResponseDTO;
 import com.example.backend.telosys.rest.services.OrdersService;
@@ -161,9 +161,8 @@ public class OrdersRestController {
 	 * @return 200 OK or 404 not found
 	 */
 	@PostMapping("/buybook")
-	protected ResponseEntity<OrdersResponseDTO> buyBook(@RequestBody OrdersDTO ordersDTO) {
+	protected ResponseEntity<OrdersResponseDTO> buyBook(@RequestBody OrderRequest orderRequest) {
 		logger.debug("REST : POST - buyBook");
-		ordersDTO.setOrderedAt(LocalDateTime.now());
-		return ResponseEntity.ok(service.buyBook(ordersDTO));
+		return ResponseEntity.ok(service.buyBook(orderRequest));
 	}
 }

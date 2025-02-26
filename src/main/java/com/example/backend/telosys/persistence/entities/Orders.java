@@ -41,13 +41,13 @@ public class Orders implements Serializable {
 
     // --- OTHER DATA FIELDS
     @Column(name = "book_id", nullable = false)
-    private int bookId;
+    private Long bookId;
 
     @Column(name = "user_id", nullable = false)
-    private int userId;
+    private Long userId;
 
-    @Column(name = "quality", nullable = false)
-    private byte quality;
+    @Column(name = "quantity", nullable = false)
+    private byte quantity;
 
     @Column(name = "ordered_at", nullable = false)
     private LocalDateTime orderedAt;
@@ -76,28 +76,28 @@ public class Orders implements Serializable {
         return this.id;
     }
 
-    public void setBookId(int bookId) {
+    public void setBookId(Long bookId) {
         this.bookId = bookId;
     }
 
-    public int getBookId() {
+    public Long getBookId() {
         return this.bookId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
-    public void setQuality(byte quality) {
-        this.quality = quality;
+    public void setquantity(byte quantity) {
+        this.quantity = quantity;
     }
 
-    public byte getQuality() {
-        return this.quality;
+    public byte getquantity() {
+        return this.quantity;
     }
 
     public void setOrderedAt(LocalDateTime orderedAt) {
@@ -132,7 +132,7 @@ public class Orders implements Serializable {
         sb.append("id=").append(id);
         sb.append(separator).append("bookId=").append(bookId);
         sb.append(separator).append("userId=").append(userId);
-        sb.append(separator).append("quality=").append(quality);
+        sb.append(separator).append("quantity=").append(quantity);
         sb.append(separator).append("orderedAt=").append(orderedAt);
         sb.append("]");
         return sb.toString();

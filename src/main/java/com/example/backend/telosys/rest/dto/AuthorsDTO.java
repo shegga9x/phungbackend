@@ -31,6 +31,13 @@ public class AuthorsDTO implements Serializable {
 		super();
     }
     
+
+    public AuthorsDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+
     public void setId( Long id ) {
         this.id = id ;
     }
