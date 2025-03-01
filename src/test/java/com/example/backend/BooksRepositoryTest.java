@@ -1,17 +1,6 @@
 package com.example.backend;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +9,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.example.backend.ITBookAPI.ITBookService;
-import com.example.backend.ITBookAPI.DTO.ITBookDTO;
-import com.example.backend.ITBookAPI.DTO.ITBookDetailDTO;
-import com.example.backend.telosys.persistence.repositories.BooksRepository;
-import com.example.backend.telosys.rest.dto.AuthorsDTO;
-import com.example.backend.telosys.rest.dto.BooksDTO;
-import com.example.backend.telosys.rest.dto.BooksResponseDTO;
-import com.example.backend.telosys.rest.services.BooksService;
+import com.example.backend.thirtParty.ITBookAPI.ITBookService;
+import com.example.backend.thirtParty.telosys.persistence.repositories.BooksRepository;
+import com.example.backend.thirtParty.telosys.rest.dto.BooksResponseDTO;
+import com.example.backend.thirtParty.telosys.rest.services.BooksService;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -63,10 +49,10 @@ public class BooksRepositoryTest {
 		return;
 	}
 
-	@Test
-	public void testFindAllWithPagination() {
-		System.out.println(booksRepository.countBooksWithAuthorsAndAvgScore(null));
-	}
+	// @Test
+	// public void testFindAllWithPagination() {
+	// 	System.out.println(booksRepository.countBooksWithAuthorsAndAvgScore(null));
+	// }
 
 	// @Test
 	// public void testITBookAPI() {

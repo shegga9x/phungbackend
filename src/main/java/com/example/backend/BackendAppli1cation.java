@@ -2,12 +2,12 @@ package com.example.backend;
 
 public class BackendAppli1cation {
 
-	public static void main(String[] args) {
-		BackendAppli1cation app = new BackendAppli1cation();
-		String s = "ababccccbsdds";
-		System.out.println(app.longestPalindrome(s));
+	// public static void main(String[] args) {
+	// 	BackendAppli1cation app = new BackendAppli1cation();
+	// 	String s = "ababccccbsdds";
+	// 	System.out.println(app.longestPalindrome(s));
 
-	}
+	// }
 
 	public String longestPalindrome(String s) {
 		String result = "";

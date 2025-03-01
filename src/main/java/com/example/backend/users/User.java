@@ -6,12 +6,14 @@ import com.example.backend.users.data.UpdateUserRequest;
 import com.example.backend.util.ApplicationContextProvider;
 import com.example.backend.util.Client;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,7 +43,8 @@ public class User extends AbstractEntity implements UserDetails {
   private String password;
   private String firstName;
   private String lastName;
-  private BigDecimal balance;
+  @Column(nullable = false, precision = 19, scale = 2) // 19 total digits, 2 decimal places
+  private BigDecimal balance = BigDecimal.ZERO;
 
   @Setter
   private boolean verified = false;
@@ -57,6 +60,18 @@ public class User extends AbstractEntity implements UserDetails {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   private List<UserConnectedAccount> connectedAccounts = new ArrayList<>();
+
+  @PrePersist
+  public void prePersist() {
+    if (balance == null) {
+      balance = BigDecimal.ZERO;
+    }
+  }
+
+  // Getters and Setters
+  public BigDecimal getBalance() {
+    return balance;
+  }
 
   public User(CreateUserRequest data) {
     PasswordEncoder passwordEncoder = ApplicationContextProvider.bean(PasswordEncoder.class);
@@ -107,7 +122,6 @@ public class User extends AbstractEntity implements UserDetails {
   public String getUsername() {
     return email;
   }
-
 
   @Override
   public boolean isAccountNonExpired() {

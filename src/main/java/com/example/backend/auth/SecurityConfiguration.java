@@ -31,6 +31,8 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -81,13 +83,13 @@ public class SecurityConfiguration {
     http.addFilterBefore(new UsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.userDetailsService(userDetailsService);
 
-    http.csrf(AbstractHttpConfigurer::disable); //  Implement jwt token based authentication
+    http.csrf(AbstractHttpConfigurer::disable); // Implement jwt token based authentication
 
-//    http.csrf(csrf -> {
-//      csrf
-//          .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//          .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler());
-//    }).addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
+    // http.csrf(csrf -> {
+    // csrf
+    // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+    // .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler());
+    // }).addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
     http.cors(customizer -> {
       customizer.configurationSource(corsConfigurationSource());
@@ -101,13 +103,22 @@ public class SecurityConfiguration {
     return new BCryptPasswordEncoder();
   }
 
+  @Bean
+  public CookieSerializer cookieSerializer() {
+    DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+    serializer.setSameSite("None"); // Allow cross-site cookies
+    serializer.setUseSecureCookie(true); // Requires HTTPS
+    serializer.setDomainName(applicationProperties.getBaseUrl()); // Cookies available across subdomains
+    return serializer;
+  }
+
   private CorsConfigurationSource corsConfigurationSource() {
     return new CorsConfigurationSource() {
       @Override
       public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(applicationProperties.getAllowedOrigins());
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         return config;
@@ -129,7 +140,8 @@ public class SecurityConfiguration {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
       /*
-       * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
+       * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection
+       * of
        * the CsrfToken when it is rendered in the response body.
        */
       this.delegate.handle(request, response, csrfToken);
@@ -138,9 +150,12 @@ public class SecurityConfiguration {
     @Override
     public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
       /*
-       * If the request contains a request header, use CsrfTokenRequestAttributeHandler
-       * to resolve the CsrfToken. This applies when a single-page application includes
-       * the header value automatically, which was obtained via a cookie containing the
+       * If the request contains a request header, use
+       * CsrfTokenRequestAttributeHandler
+       * to resolve the CsrfToken. This applies when a single-page application
+       * includes
+       * the header value automatically, which was obtained via a cookie containing
+       * the
        * raw CsrfToken.
        */
       if (StringUtils.hasText(request.getHeader(csrfToken.getHeaderName()))) {

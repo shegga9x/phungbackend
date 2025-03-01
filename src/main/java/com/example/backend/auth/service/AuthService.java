@@ -48,12 +48,12 @@ public class AuthService {
     securityContextRepository.saveContext(context, request, response);
   }
 
-  @Transactional
-  public UserResponse getSession(HttpServletRequest request) {
-    User user = SecurityUtil.getAuthenticatedUser();
-    Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-    return new UserResponse(user, authorities);
-  }
+    @Transactional
+    public UserResponse getSession(HttpServletRequest request) {
+      User user = SecurityUtil.getAuthenticatedUser();
+      Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+      return new UserResponse(user, authorities);
+    }
 
   public void logout(HttpServletRequest request, HttpServletResponse response) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

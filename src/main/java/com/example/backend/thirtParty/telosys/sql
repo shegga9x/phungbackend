@@ -1,0 +1,51 @@
+FROM books A
+JOIN book_authors B ON A.id = B.book_id 
+JOIN authors D ON B.author_id = D.id
+GROUP BY A.title 
+ORDER BY `values_list` DESC 
+LIMIT 100;
+
+SELECT A.*, GROUP_CONCAT(DISTINCT D.name SEPARATOR ', ') AS listAuthors, AVG(C.score) AS avg_score
+FROM books A
+LEFT OUTER JOIN book_authors B ON A.id = B.book_id 
+LEFT OUTER JOIN authors D ON B.author_id = D.id
+LEFT OUTER JOIN ratings C ON A.id = C.book_id 
+GROUP BY A.id,A.title
+ORDER BY A.price; 
+
+SELECT COUNT(*)
+FROM books A
+WHERE (EXISTS (SELECT 1 FROM book_authors B WHERE A.id = B.book_id)  
+       OR EXISTS (SELECT 1 FROM ratings C WHERE A.id = C.book_id))  
+  AND A.`type` = 'book';
+
+SELECT A.*, authors.listAuthors, ratings.avg_score
+FROM books A
+LEFT JOIN (
+    SELECT B.book_id, GROUP_CONCAT(DISTINCT D.name SEPARATOR ', ') AS listAuthors
+    FROM book_authors B
+    JOIN authors D ON B.author_id = D.id
+    GROUP BY B.book_id
+) authors ON A.id = authors.book_id
+LEFT JOIN (
+    SELECT C.book_id, AVG(C.score) AS avg_score
+    FROM ratings C
+    GROUP BY C.book_id
+) ratings ON A.id = ratings.book_id
+ORDER BY A.price;
+
+UPDATE books AS b
+SET b.url_img = CONCAT('https://itbook.store/img/books/', b.id, '.png')
+WHERE b.id > 1000000000000;
+
+
+UPDATE books AS b
+JOIN (
+    SELECT id, CONCAT('https://itbook.store/img/books/', id, '.png') AS new_url_img
+    FROM books
+    WHERE id > 1000000000000
+    ORDER BY RAND()
+    LIMIT 100
+) AS subquery ON b.id = subquery.id
+SET b.url_img = subquery.new_url_img
+WHERE b.id <= 100;

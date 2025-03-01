@@ -1,11 +1,12 @@
 package com.example.backend.users.service;
 
 import com.example.backend.auth.SecurityUtil;
-import com.example.backend.s3.UploadedFile;
-import com.example.backend.s3.repository.UploadedFileRepository;
-import com.example.backend.s3.service.FileUploadService;
-import com.example.backend.telosys.rest.dto.UserDTO;
-import com.example.backend.telosys.rest.services.commons.GenericService;
+import com.example.backend.auth.service.UserDetailsServiceImpl;
+import com.example.backend.thirtParty.s3.UploadedFile;
+import com.example.backend.thirtParty.s3.repository.UploadedFileRepository;
+import com.example.backend.thirtParty.s3.service.FileUploadService;
+import com.example.backend.thirtParty.telosys.rest.dto.UserDTO;
+import com.example.backend.thirtParty.telosys.rest.services.commons.GenericService;
 import com.example.backend.users.PasswordResetToken;
 import com.example.backend.users.User;
 import com.example.backend.users.VerificationCode;
@@ -27,6 +28,10 @@ import java.util.Optional;
 import org.jobrunr.scheduling.BackgroundJobRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,13 +46,14 @@ public class UserService extends GenericService<User, UserDTO> {
   private final UploadedFileRepository uploadedFileRepository;
   private final PasswordEncoder passwordEncoder;
   private final FileUploadService fileUploadService;
+  private final UserDetailsServiceImpl userDetailsService;
 
   public UserService(UserRepository userRepository,
       VerificationCodeRepository verificationCodeRepository,
       PasswordResetTokenRepository passwordResetTokenRepository,
       UploadedFileRepository uploadedFileRepository,
       PasswordEncoder passwordEncoder,
-      FileUploadService fileUploadService) {
+      FileUploadService fileUploadService, UserDetailsServiceImpl userDetailsService) {
     super(User.class, UserDTO.class);
     this.userRepository = userRepository;
     this.verificationCodeRepository = verificationCodeRepository;
@@ -55,6 +61,7 @@ public class UserService extends GenericService<User, UserDTO> {
     this.uploadedFileRepository = uploadedFileRepository;
     this.passwordEncoder = passwordEncoder;
     this.fileUploadService = fileUploadService;
+    this.userDetailsService = userDetailsService;
   }
 
   @Transactional
@@ -113,6 +120,7 @@ public class UserService extends GenericService<User, UserDTO> {
     user = userRepository.getReferenceById(user.getId());
     user.update(request);
     user = userRepository.save(user);
+    refreshUserSession(user.getEmail());
     return new UserResponse(user);
   }
 
@@ -125,6 +133,7 @@ public class UserService extends GenericService<User, UserDTO> {
 
     user.updatePassword(request.getPassword());
     user = userRepository.save(user);
+    refreshUserSession(user.getEmail());
     return new UserResponse(user);
   }
 
@@ -142,7 +151,7 @@ public class UserService extends GenericService<User, UserDTO> {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
+    refreshUserSession(user.getEmail());
     return new UserResponse(user);
   }
 
@@ -204,6 +213,7 @@ public class UserService extends GenericService<User, UserDTO> {
   public boolean update(UserDTO dto) {
     logger.debug("update({})", dto);
     if (userRepository.existsById(getEntityId(dto))) {
+      refreshUserSession(dto.getEmail());
       userRepository.save(dtoToEntity(dto));
       return true; // find and updated
     } else {
@@ -264,4 +274,12 @@ public class UserService extends GenericService<User, UserDTO> {
     }
   }
 
+  private void refreshUserSession(String email) {
+    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+    Authentication newAuth = new UsernamePasswordAuthenticationToken(
+        userDetails,
+        userDetails.getPassword(),
+        userDetails.getAuthorities());
+    SecurityContextHolder.getContext().setAuthentication(newAuth);
+  }
 }
