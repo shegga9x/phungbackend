@@ -32,8 +32,8 @@ import feign.Param;
  */
 public interface BooksRepository extends JpaRepository<Books, Long> {
 
-	@Query("SELECT COUNT(b) FROM Books b WHERE (:type IS NULL OR b.type = :type)")
-	long countBooksWithAuthorsAndAvgScore(@Param("type") String type);
+	@Query("SELECT COUNT(b) FROM Books b WHERE (:type IS NULL OR b.type = :type)AND (:title IS NULL OR b.title LIKE %:title%)")
+	long countBooksWithAuthorsAndAvgScore(@Param("type") String type, @Param("title") String title);
 
 	@Query(value = "SELECT b.*, " +
 			"(SELECT COALESCE(AVG(r.score), 0) FROM ratings r WHERE r.book_id = b.id) AS avgRating, " +
@@ -41,15 +41,23 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
 			"JOIN book_authors ba ON a.id = ba.author_id " +
 			"WHERE ba.book_id = b.id) AS authorNames " +
 			"FROM books b " +
-			"WHERE (:type IS NULL OR b.type = :type)", nativeQuery = true)
-	List<Object[]> findBooksWithAuthorsAndRatings(Pageable pageable, @Param("type") String type);
+			"WHERE (:type IS NULL OR b.type = :type) AND (:title IS NULL OR b.title LIKE %:title%)", nativeQuery = true)
+	List<Object[]> findBooksWithAuthorsAndRatings(Pageable pageable, @Param("type") String type,
+			@Param("title") String title);
 
 	@Query(value = "SELECT b.*, " +
 			"(SELECT COALESCE(AVG(r.score), 0) FROM ratings r WHERE r.book_id = b.id) AS avgRating, " +
 			"(SELECT GROUP_CONCAT(a.name SEPARATOR ', ') FROM authors a " +
 			"JOIN book_authors ba ON a.id = ba.author_id " +
 			"WHERE ba.book_id = b.id) AS authorNames " +
-			"FROM books b ", nativeQuery = true)
-	List<Object[]> findBooksWithAuthorsAndRatings();
+			"FROM books b " +
+			"WHERE b.id = :id", nativeQuery = true)
+	Object findBooksWithAuthorsAndRatingsById(@Param("id") Long id);
+
+	@Query(value = "SELECT b.title " +
+			"FROM books b " +
+			"WHERE (:title IS NULL OR b.title LIKE %:title%) " +
+			"LIMIT 500", nativeQuery = true)
+	List<String> findBooksWithTitle(@Param("title") String title);
 
 }

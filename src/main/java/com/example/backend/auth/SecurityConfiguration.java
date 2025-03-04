@@ -20,6 +20,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -79,7 +80,7 @@ public class SecurityConfiguration {
             response.sendError(401, "Unauthorized");
           });
     });
-
+    http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)); // Keep session
     http.addFilterBefore(new UsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.userDetailsService(userDetailsService);
 
@@ -106,23 +107,22 @@ public class SecurityConfiguration {
   @Bean
   public CookieSerializer cookieSerializer() {
     DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-    serializer.setSameSite("None"); // Allow cross-site cookies
-    serializer.setUseSecureCookie(true); // Requires HTTPS
-    serializer.setDomainName(applicationProperties.getBaseUrl()); // Cookies available across subdomains
+    serializer.setDomainName(applicationProperties.getBaseUrl()); // Set main domain
+    serializer.setCookieName("JSESSIONID");
+    serializer.setSameSite("None"); // Allow cross-domain
+    serializer.setUseSecureCookie(true); // Required for SameSite=None
     return serializer;
   }
 
-  private CorsConfigurationSource corsConfigurationSource() {
-    return new CorsConfigurationSource() {
-      @Override
-      public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(applicationProperties.getAllowedOrigins());
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-        return config;
-      }
+  public CorsConfigurationSource corsConfigurationSource() {
+    return request -> {
+      CorsConfiguration config = new CorsConfiguration();
+      config.setAllowedOrigins(applicationProperties.getAllowedOrigins()); // Use exact origin
+      config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+      config.setAllowedHeaders(List.of("*"));
+      config.setExposedHeaders(List.of("Authorization", "Set-Cookie")); // Allow session cookies
+      config.setAllowCredentials(true); // Required for session persistence
+      return config;
     };
   }
 

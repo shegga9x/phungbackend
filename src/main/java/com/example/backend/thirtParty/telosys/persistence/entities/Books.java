@@ -8,10 +8,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.example.backend.thirtParty.telosys.entityListeners.BookListener;
 import com.example.backend.util.Client;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +27,7 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Client
+@EntityListeners(BookListener.class) // ✅ Attach listener
 @Table(name = "books", catalog = "starter-kit-db")
 public class Books implements Serializable {
 

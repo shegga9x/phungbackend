@@ -21,4 +21,11 @@ public class ApplicationProperties {
   private String vapidPublicKey;
   private String vapidPrivateKey;
   private String vapidSubject;
+  private String proxyHost;
+  private int proxyPort;
+  private String proxyUser;
+  private String proxyPass;
+  private String solrUrl;
+  private String solrUsername;
+  private String solrPassword;
 }

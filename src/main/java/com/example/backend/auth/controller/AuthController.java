@@ -6,6 +6,7 @@ import com.example.backend.users.data.UserResponse;
 import com.example.backend.util.Client;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,15 @@ public class AuthController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<UserResponse> getSession(HttpServletRequest request) {
+  public ResponseEntity<UserResponse> getSession(HttpServletRequest request, HttpServletResponse response) {
+    HttpSession session = request.getSession(true); // 🔥 Force session creation
+
+    // Debugging: Print session ID
+    System.out.println("Session ID: " + session.getId());
+
+    // 🔥 Manually add Set-Cookie to response
+    response.addHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/; Secure; HttpOnly; SameSite=None");
+
     return ResponseEntity.ok(authService.getSession(request));
   }
 
@@ -50,5 +59,10 @@ public class AuthController {
   @GetMapping("/csrf")
   public ResponseEntity<?> csrf() {
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/session")
+  public ResponseEntity<String> getSession(HttpSession session) {
+    return ResponseEntity.ok("Session ID: " + session.getId());
   }
 }

@@ -3,8 +3,11 @@ package com.example.backend.thirtParty.telosys.rest.dto;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.solr.common.SolrDocument;
 
 public class BooksResponseDTO {
     private Long id;
@@ -117,4 +120,47 @@ public class BooksResponseDTO {
         this.urlImg = urlImg;
     }
 
+    public BooksResponseDTO mapSolrDocumentToDTO(SolrDocument doc) {
+        BooksResponseDTO dto = new BooksResponseDTO();
+        Object idObj = doc.getFieldValue("id");
+        if (idObj != null) {
+            dto.setId(Long.parseLong(idObj.toString())); // Convert String to Long
+        }
+
+        dto.setTitle((String) doc.getFieldValue("title"));
+        dto.setType((String) doc.getFieldValue("type"));
+
+        // Convert Solr Date (stored as java.util.Date) to LocalDateTime
+        Object publishedAtObj = doc.getFieldValue("publishedAt");
+        if (publishedAtObj != null && publishedAtObj instanceof java.util.Date) {
+            dto.setPublishedAt(((java.util.Date) publishedAtObj).toInstant().atZone(ZoneOffset.UTC).toLocalDateTime());
+        }
+        Object stockObj = doc.getFieldValue("stock");
+        if (stockObj != null) {
+            dto.setStock(((Long) stockObj).intValue());
+        }
+
+        // Convert price and rating back to BigDecimal
+        Object priceObj = doc.getFieldValue("price");
+        if (priceObj != null) {
+            dto.setPrice(new BigDecimal(priceObj.toString()));
+        }
+
+        Object ratingObj = doc.getFieldValue("averageRating");
+        if (ratingObj != null) {
+            dto.setAverageRating(new BigDecimal(ratingObj.toString()));
+        }
+        dto.setUrlImg((String) doc.getFieldValue("urlImg"));
+
+        Object authorsObj = doc.getFieldValue("authors");
+        if (authorsObj instanceof String[]) {
+            dto.setAuthors((String[]) authorsObj);
+        } else if (authorsObj instanceof String) {
+            dto.setAuthors(new String[] { (String) authorsObj });
+        } else {
+            dto.setAuthors(new String[] { "" });
+        }
+
+        return dto;
+    }
 }

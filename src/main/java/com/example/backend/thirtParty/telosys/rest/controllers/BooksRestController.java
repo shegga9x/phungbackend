@@ -58,13 +58,14 @@ public class BooksRestController {
 	@GetMapping("")
 	protected ResponseEntity<List<BooksResponseDTO>> findAllWithPagination(@RequestParam(required = false) Integer page,
 			@RequestParam(required = false) Integer size, @RequestParam(required = false) String type,
-			@RequestParam(required = false) String sort) {
+			@RequestParam(required = false) String sort,
+			@RequestParam(required = false) String title) {
 		if (page == null)
 			page = 0;
 		if (size == null)
 			size = 10;
 		Pageable pageable = PageRequest.of(page, size);
-		List<BooksResponseDTO> results = service.findAllWithPagination(pageable, type, sort);
+		List<BooksResponseDTO> results = service.findAllWithPagination(pageable, type, sort, title);
 		return ResponseEntity.ok(results); // always 200
 	}
 
@@ -183,10 +184,23 @@ public class BooksRestController {
 	 */
 	@GetMapping("/totalBooksWithAuthorsAndAvgScore")
 	protected ResponseEntity<Long> getTotalBooksWithAuthorsAndAvgScore(
-			@RequestParam(required = false) String type) {
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String title) {
 		logger.debug("REST : GET - getTotalBooks " + type);
-		long total = service.getTotalBooksWithAuthorsAndAvgScore(type);
+		long total = service.getTotalBooksWithAuthorsAndAvgScore(type, title);
 		return ResponseEntity.ok(total); // 200 OK with total count
+	}
+
+	/**
+	 * Get total number of books
+	 *
+	 * @return 200 with total count
+	 */
+	@GetMapping("/search")
+	protected ResponseEntity<List<String>> search(
+			@RequestParam(required = false) String title) {
+		List<String> result = service.search(title);
+		return ResponseEntity.ok(result); // 200 OK with total count
 	}
 
 }

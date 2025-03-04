@@ -4,9 +4,13 @@
  */
 package com.example.backend.thirtParty.telosys.rest.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteSolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.thirtParty.solr.crud.BookSolrService;
 import com.example.backend.thirtParty.telosys.persistence.entities.Books;
 import com.example.backend.thirtParty.telosys.persistence.repositories.BooksRepository;
 import com.example.backend.thirtParty.telosys.rest.dto.BooksDTO;
@@ -36,15 +41,18 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	private static final Logger logger = LoggerFactory.getLogger(BooksService.class);
 
 	private final BooksRepository repository; // injected by constructor
+	private final BookSolrService bookSolrService; // injected by constructor
 
 	/**
 	 * Constructor (usable for Dependency Injection)
 	 * 
 	 * @param repository the repository to be injected
 	 */
-	public BooksService(BooksRepository repository) {
+	public BooksService(BooksRepository repository, BookSolrService bookSolrService) {
 		super(Books.class, BooksDTO.class);
 		this.repository = repository;
+		this.bookSolrService = bookSolrService;
+
 	}
 
 	/**
@@ -182,7 +190,7 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param pageable
 	 * @return
 	 */
-	public List<BooksResponseDTO> findAllWithPagination(Pageable pageable, String bookType, String flag) {
+	public List<BooksResponseDTO> findAllWithPagination(Pageable pageable, String bookType, String flag, String title) {
 		logger.debug("findAllWithPagination({}, {}, {})", pageable, bookType, flag);
 		if (pageable.getPageNumber() > 0) {
 			if (flag != null) {
@@ -192,7 +200,27 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 				pageable = PageRequest.of(pageable.getPageNumber() - 1, 6);
 			}
 		}
-		return mapObjectArrayToDTO(repository.findBooksWithAuthorsAndRatings(pageable, bookType));
+		try {
+			return bookSolrService.findBooksWithAuthorsAndRatings(pageable, bookType, flag, title);
+		} catch (SolrServerException | IOException | RemoteSolrException e) {
+			System.out.println(e);
+			return mapObjectArrayToDTO(repository.findBooksWithAuthorsAndRatings(pageable, bookType, title));
+		}
+
+	}
+
+	public List<BooksResponseDTO> findBooksWithAuthorsAndRatings() {
+		return mapObjectArrayToDTO(repository.findBooksWithAuthorsAndRatings(null, null, null));
+	}
+
+	/**
+	 * Finds all occurrences of the entity with pagination
+	 *
+	 * @param pageable
+	 * @return
+	 */
+	public BooksResponseDTO findBooksWithAuthorsAndRatingsById(Long id) {
+		return mapObjectToDTO(repository.findBooksWithAuthorsAndRatingsById(id));
 	}
 
 	/**
@@ -201,10 +229,16 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * @param bookType the type of the book
 	 * @return the total count of books with authors and average score
 	 */
-	public long getTotalBooksWithAuthorsAndAvgScore(String bookType) {
+	public long getTotalBooksWithAuthorsAndAvgScore(String bookType, String title) {
 		logger.debug("getTotalBooks()");
-		return repository.countBooksWithAuthorsAndAvgScore(bookType);
+		try {
+			return bookSolrService.getTotalDocuments(bookType, title);
+		} catch (SolrServerException | IOException | RemoteSolrException e) {
+			return repository.countBooksWithAuthorsAndAvgScore(bookType, title);
+
+		}
 	}
+
 	// -----------------------------------------------------------------------------------------
 	// Specific "finders"
 	// -----------------------------------------------------------------------------------------
@@ -229,4 +263,14 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 	 * return entityListToDtoList(list);
 	 * }
 	 ***/
+
+	public List<String> search(String title) {
+		try {
+			List<BooksResponseDTO> books = bookSolrService.searchBooks(title);
+			return books.stream().map(BooksResponseDTO::getTitle).collect(Collectors.toList());
+		} catch (SolrServerException | IOException | RemoteSolrException e) {
+			System.out.println(e);
+			return repository.findBooksWithTitle(title);
+		}
+	}
 }

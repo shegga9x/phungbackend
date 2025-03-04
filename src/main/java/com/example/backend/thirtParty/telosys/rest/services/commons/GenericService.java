@@ -180,4 +180,23 @@ public abstract class GenericService<ENTITY, DTO> {
 		return result;
 	}
 
+	protected BooksResponseDTO mapObjectToDTO(Object object) {
+		Object[] row = (Object[]) object;
+		BooksResponseDTO dto = new BooksResponseDTO();
+		if (row.length >= 8) {
+			dto.setId((Long) row[0]);
+			dto.setTitle((String) row[1]);
+			Timestamp sqlTime = (Timestamp) row[3];
+			sqlTime.toLocalDateTime().toLocalDate();
+			dto.setPublishedAt(sqlTime.toLocalDateTime());
+			dto.setStock((Integer) row[4]);
+			dto.setPrice((BigDecimal) row[5]);
+			dto.setAuthors(row[9] != null ? ((String) row[9]).split(",") : new String[] { "" });
+			dto.setType((String) row[2]);
+			dto.setAverageRating(row[8] != null ? (BigDecimal) row[8] : BigDecimal.ZERO);
+			dto.setUrlImg((String) row[7]);
+		}
+		return dto;
+	}
+
 }

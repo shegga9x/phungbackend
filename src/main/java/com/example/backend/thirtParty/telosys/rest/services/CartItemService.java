@@ -215,10 +215,8 @@ public class CartItemService extends GenericService<CartItem, CartItemDTO> {
 			response.setPublishedAt(book.getPublishedAt());
 			response.setStock(book.getStock());
 			response.setPrice(book.getPrice());
-			// response.setAuthors(book.getAuthors());
-			// response.setAverageRating(book.getAverageRating());
-			// response.setRatings(book.getRatings());
 			response.setQuantity(cartItem.getQuantity());
+			response.setUrlImg(book.getUrlImg());
 			responseList.add(response);
 		}
 		return responseList;

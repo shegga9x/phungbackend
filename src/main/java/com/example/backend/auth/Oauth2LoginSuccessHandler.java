@@ -8,14 +8,18 @@ import com.example.backend.users.repository.ConnectedAccountRepository;
 import com.example.backend.users.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,14 +48,17 @@ public class Oauth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     String providerId = authentication.getName();
     String email = authenticationToken.getPrincipal().getAttribute("email");
 
-    // First check if we have the user based on a connected account (provider / providerId)
-    Optional<UserConnectedAccount> connectedAccount = connectedAccountRepository.findByProviderAndProviderId(provider, providerId);
+    // First check if we have the user based on a connected account (provider /
+    // providerId)
+    Optional<UserConnectedAccount> connectedAccount = connectedAccountRepository.findByProviderAndProviderId(provider,
+        providerId);
     if (connectedAccount.isPresent()) {
-      authenticateUser(connectedAccount.get().getUser(), response);
+      authenticateUser(connectedAccount.get().getUser(), response, request);
       return;
     }
 
-    // At this point we don't have a connected account, so we either find a user by email and add the connected account
+    // At this point we don't have a connected account, so we either find a user by
+    // email and add the connected account
     // or we create a new user
     User existingUser = userRepository.findByEmail(email).orElse(null);
     if (existingUser != null) {
@@ -59,16 +66,21 @@ public class Oauth2LoginSuccessHandler implements AuthenticationSuccessHandler {
       existingUser.addConnectedAccount(newConnectedAccount);
       existingUser = userRepository.save(existingUser);
       connectedAccountRepository.save(newConnectedAccount);
-      authenticateUser(existingUser, response);
+      authenticateUser(existingUser, response, request);
     } else {
       User newUser = createUserFromOauth2User(authenticationToken);
-      authenticateUser(newUser, response);
+      authenticateUser(newUser, response, request);
     }
   }
 
-  private void authenticateUser(User user, HttpServletResponse response) throws IOException {
-    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-    SecurityContextHolder.getContext().setAuthentication(token);
+  private void authenticateUser(User user, HttpServletResponse response,
+      HttpServletRequest request) throws IOException {
+    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null,
+        user.getAuthorities());
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+    securityContext.setAuthentication(token);
+    HttpSession session = request.getSession(true); // true = create if not exists
+    session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
     response.sendRedirect(applicationProperties.getLoginSuccessUrl());
   }
 

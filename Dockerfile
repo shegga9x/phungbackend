@@ -5,6 +5,8 @@ FROM maven:3.9.8-amazoncorretto-21 AS build
 # Copy source code and pom.xml file to /app folder
 WORKDIR /app
 COPY pom.xml .
+RUN mvn dependency:go-offline
+
 COPY src ./src
 
 ENV DATABASE_HOST=dbphungsiuvip.c3ye2y2k6vcc.ap-southeast-1.rds.amazonaws.com
@@ -17,8 +19,11 @@ ENV BASE_URL=https://besiuvip.io.vn/
 # Build source code with maven
 RUN mvn package -DskipTests
 
-#Stage 2: create image
-# Start with Amazon Correto JDK 21
+# Extract JAR layers
+RUN java -Djarmode=layertools -jar target/*.jar extract
+
+# Stage 2: Run Optimized JAR
+FROM eclipse-temurin:21-jre AS runtime
 FROM amazoncorretto:21.0.4
 
 # Set working folder to App and copy complied file from above step
