@@ -1,20 +1,5 @@
 package com.example.io;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-
-import com.github.javafaker.Faker;
-
 public class FakeDataTest {
 
 	// @Test
