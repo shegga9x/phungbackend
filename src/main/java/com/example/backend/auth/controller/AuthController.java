@@ -35,14 +35,6 @@ public class AuthController {
 
   @GetMapping("/me")
   public ResponseEntity<UserResponse> getSession(HttpServletRequest request, HttpServletResponse response) {
-    HttpSession session = request.getSession(true); // 🔥 Force session creation
-
-    // Debugging: Print session ID
-    System.out.println("Session ID: " + session.getId());
-
-    // 🔥 Manually add Set-Cookie to response
-    response.addHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/; Secure; HttpOnly; SameSite=None");
-
     return ResponseEntity.ok(authService.getSession(request));
   }
 

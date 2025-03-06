@@ -20,6 +20,9 @@ import com.example.backend.users.repository.PasswordResetTokenRepository;
 import com.example.backend.users.repository.UserRepository;
 import com.example.backend.users.repository.VerificationCodeRepository;
 import com.example.backend.util.exception.ApiException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +32,7 @@ import org.jobrunr.scheduling.BackgroundJobRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,13 +51,14 @@ public class UserService extends GenericService<User, UserDTO> {
   private final PasswordEncoder passwordEncoder;
   private final FileUploadService fileUploadService;
   private final UserDetailsServiceImpl userDetailsService;
+  private HttpServletRequest request; // Inject the HTTP request
 
   public UserService(UserRepository userRepository,
       VerificationCodeRepository verificationCodeRepository,
       PasswordResetTokenRepository passwordResetTokenRepository,
       UploadedFileRepository uploadedFileRepository,
       PasswordEncoder passwordEncoder,
-      FileUploadService fileUploadService, UserDetailsServiceImpl userDetailsService) {
+      FileUploadService fileUploadService, UserDetailsServiceImpl userDetailsService, HttpServletRequest request) {
     super(User.class, UserDTO.class);
     this.userRepository = userRepository;
     this.verificationCodeRepository = verificationCodeRepository;
@@ -62,6 +67,7 @@ public class UserService extends GenericService<User, UserDTO> {
     this.passwordEncoder = passwordEncoder;
     this.fileUploadService = fileUploadService;
     this.userDetailsService = userDetailsService;
+    this.request = request;
   }
 
   @Transactional
@@ -280,6 +286,15 @@ public class UserService extends GenericService<User, UserDTO> {
         userDetails,
         userDetails.getPassword(),
         userDetails.getAuthorities());
-    SecurityContextHolder.getContext().setAuthentication(newAuth);
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+    securityContext.setAuthentication(newAuth);
+    // Get the session and update it
+    HttpSession session = request.getSession(false); // Get existing session (don't create new)
+    if (session != null) {
+      session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+      System.out.println("Session updated: " + session.getId());
+    } else {
+      System.out.println("No active session found!");
+    }
   }
 }
