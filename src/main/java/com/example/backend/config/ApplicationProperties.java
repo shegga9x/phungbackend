@@ -28,4 +28,6 @@ public class ApplicationProperties {
   private String solrUrl;
   private String solrUsername;
   private String solrPassword;
+  private String sessionDomain;
+
 }

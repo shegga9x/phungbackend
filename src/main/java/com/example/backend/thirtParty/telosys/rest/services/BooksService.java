@@ -4,19 +4,13 @@
  */
 package com.example.backend.thirtParty.telosys.rest.services;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteSolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.thirtParty.solr.crud.BookSolrService;
@@ -25,6 +19,9 @@ import com.example.backend.thirtParty.telosys.persistence.repositories.BooksRepo
 import com.example.backend.thirtParty.telosys.rest.dto.BooksDTO;
 import com.example.backend.thirtParty.telosys.rest.dto.BooksResponseDTO;
 import com.example.backend.thirtParty.telosys.rest.services.commons.GenericService;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 
 /**
  * REST service for entity "Books" <br>
@@ -184,93 +181,47 @@ public class BooksService extends GenericService<Books, BooksDTO> {
 		}
 	}
 
-	/**
-	 * Finds all occurrences of the entity with pagination
-	 *
-	 * @param pageable
-	 * @return
-	 */
-	public List<BooksResponseDTO> findAllWithPagination(Pageable pageable, String bookType, String flag, String title) {
-		logger.debug("findAllWithPagination({}, {}, {})", pageable, bookType, flag);
-		if (pageable.getPageNumber() > 0) {
-			if (flag != null) {
-				Sort sort = Sort.by(Sort.Direction.fromString(Direction.DESC.name()), flag);
-				pageable = PageRequest.of(pageable.getPageNumber() - 1, 6, sort);
-			} else {
-				pageable = PageRequest.of(pageable.getPageNumber() - 1, 6);
-			}
-		}
-		try {
-			return bookSolrService.findBooksWithAuthorsAndRatings(pageable, bookType, flag, title);
-		} catch (SolrServerException | IOException | RemoteSolrException e) {
-			System.out.println(e);
-			return mapObjectArrayToDTO(repository.findBooksWithAuthorsAndRatings(pageable, bookType, title));
-		}
-
-	}
-
-	public List<BooksResponseDTO> findBooksWithAuthorsAndRatings() {
-		return mapObjectArrayToDTO(repository.findBooksWithAuthorsAndRatings(null, null, null));
-	}
-
-	/**
-	 * Finds all occurrences of the entity with pagination
-	 *
-	 * @param pageable
-	 * @return
-	 */
 	public BooksResponseDTO findBooksWithAuthorsAndRatingsById(Long id) {
 		return mapObjectToDTO(repository.findBooksWithAuthorsAndRatingsById(id));
 	}
 
-	/**
-	 * Returns the total number of books with authors and average score
-	 *
-	 * @param bookType the type of the book
-	 * @return the total count of books with authors and average score
-	 */
-	public long getTotalBooksWithAuthorsAndAvgScore(String bookType, String title) {
-		logger.debug("getTotalBooks()");
-		try {
-			return bookSolrService.getTotalDocuments(bookType, title);
-		} catch (SolrServerException | IOException | RemoteSolrException e) {
-			return repository.countBooksWithAuthorsAndAvgScore(bookType, title);
+	@Retry(name = "solrRetry", fallbackMethod = "fallbackFindAllWithPagination")
+	@CircuitBreaker(name = "solrCircuitBreaker", fallbackMethod = "fallbackFindAllWithPagination")
+	public List<BooksResponseDTO> findAllWithPagination(Pageable pageable, String bookType, String flag, String title) {
+		logger.debug("findAllWithPagination({}, {}, {})", pageable, bookType, flag);
+		return bookSolrService.findBooksWithAuthorsAndRatings(pageable, bookType, flag, title);
 
-		}
+	}
+	public List<BooksResponseDTO> fallbackFindAllWithPagination(Pageable pageable, String bookType, String flag,
+			String title, Throwable ex) {
+		logger.warn("Fallback triggered for findAllWithPagination. Fetching from DB instead. Error: {}",
+				ex.getMessage());
+		return mapObjectArrayToDTO(repository.findBooksWithAuthorsAndRatings(pageable, bookType, title));
 	}
 
-	// -----------------------------------------------------------------------------------------
-	// Specific "finders"
-	// -----------------------------------------------------------------------------------------
-	/***
-	 * public List<BooksDTO> findByTitle(String title) {
-	 * logger.debug("findByTitle({})", title);
-	 * // List<Books> list = repository.findByTitle(title);
-	 * List<Books> list = repository.findByTitleContaining(title);
-	 * return entityListToDtoList(list);
-	 * }
-	 * 
-	 * public List<BooksDTO> findByPrice(BigDecimal price) {
-	 * logger.debug("findByPrice({})", price);
-	 * // List<Books> list = repository.findByTitle(title);
-	 * List<Books> list = repository.findByPrice(price);
-	 * return entityListToDtoList(list);
-	 * }
-	 * 
-	 * public List<BooksDTO> findByTitleAndPrice(String title, BigDecimal price) {
-	 * logger.debug("findByTitleAndPrice({}, {})", title, price);
-	 * List<Books> list = repository.findByTitleContainingAndPrice(title, price);
-	 * return entityListToDtoList(list);
-	 * }
-	 ***/
-
+	@Retry(name = "solrRetry", fallbackMethod = "fallbackSearch")
+	@CircuitBreaker(name = "solrCircuitBreaker", fallbackMethod = "fallbackSearch")
 	public List<String> search(String title) {
-		try {
-			List<BooksResponseDTO> books = bookSolrService.searchBooks(title);
-			return books.stream().map(BooksResponseDTO::getTitle).collect(Collectors.toList());
-		} catch (SolrServerException | IOException | RemoteSolrException e) {
-			System.out.println(e);
-			return repository.findBooksWithTitle(title);
-		}
+		List<BooksResponseDTO> books = bookSolrService.searchBooks(title);
+		return books.stream().map(BooksResponseDTO::getTitle).collect(Collectors.toList());
+	}
+
+	public List<String> fallbackSearch(String title, Throwable ex) {
+		logger.warn("Fallback triggered for search. Fetching from DB instead. Error: {}", ex.getMessage());
+		return repository.findBooksWithTitle(title);
+	}
+
+	@Retry(name = "solrRetry", fallbackMethod = "fallbackGetTotalBooks")
+	@CircuitBreaker(name = "solrCircuitBreaker", fallbackMethod = "fallbackGetTotalBooks")
+	public long getTotalBooksWithAuthorsAndAvgScore(String bookType, String title) {
+		logger.debug("getTotalBooks()");
+		return bookSolrService.getTotalDocuments(bookType, title);
+
+	}
+
+	public long fallbackGetTotalBooks(String bookType, String title, Throwable ex) {
+		logger.warn("Fallback triggered for getTotalBooksWithAuthorsAndAvgScore. Fetching from DB. Error: {}",
+				ex.getMessage());
+		return repository.countBooksWithAuthorsAndAvgScore(bookType, title);
 	}
 }

@@ -107,7 +107,7 @@ public class SecurityConfiguration {
   @Bean
   public CookieSerializer cookieSerializer() {
     DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-    serializer.setDomainName(applicationProperties.getBaseUrl()); // Set main domain
+    serializer.setDomainName(applicationProperties.getSessionDomain()); // Set main domain
     serializer.setCookieName("JSESSIONID");
     serializer.setSameSite("None"); // Allow cross-domain
     serializer.setUseSecureCookie(true); // Required for SameSite=None

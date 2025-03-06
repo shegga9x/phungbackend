@@ -127,7 +127,7 @@ public class BooksResponseDTO {
             dto.setId(Long.parseLong(idObj.toString())); // Convert String to Long
         }
 
-        dto.setTitle((String) doc.getFieldValue("title"));
+        dto.setTitle(((List<String>) doc.getFieldValue("title")).get(0));
         dto.setType((String) doc.getFieldValue("type"));
 
         // Convert Solr Date (stored as java.util.Date) to LocalDateTime

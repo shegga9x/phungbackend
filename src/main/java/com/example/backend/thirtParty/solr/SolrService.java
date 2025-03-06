@@ -81,13 +81,8 @@ public class SolrService {
     }
 
     public List<BooksResponseDTO> searchByTitle(String title) throws SolrServerException, IOException {
-        SolrQuery query = new SolrQuery();
-        query.setQuery("title:*" + title + "*^2 OR title:" + title + "~"); // Boost exact + fuzzy match
-        query.set("qf", "title");
-        query.set("defType", "edismax");
-        query.set("mm", "1");
-        query.setRows(100);
-
+        SolrQuery query = getSolrQuery(null, null, title);
+        query.setRows(1000);
         QueryResponse response = solrClient.query("books", query);
         SolrDocumentList docs = response.getResults();
         List<BooksResponseDTO> results = new ArrayList<>();
@@ -99,34 +94,10 @@ public class SolrService {
         return results;
     }
 
-    public List<BooksResponseDTO> findBooksWithAuthorsAndRatings(Pageable pageable, String bookType,
-            String flag, String title)
+    public List<BooksResponseDTO> findBooksWithAuthorsAndRatings(Pageable pageable, String bookType, String title)
             throws SolrServerException, IOException,
             RemoteSolrException {
-        SolrQuery query = new SolrQuery();
-        // Filtering by book type
-        StringBuilder queryStr = new StringBuilder();
-        if (bookType != null && !bookType.isEmpty()) {
-            queryStr.append("type:\"").append(bookType).append("\" ");
-        }
-        if (title != null && !title.isEmpty()) {
-            queryStr.append("title:*").append(title).append("*^2 OR title:").append(title).append("~"); // Boost exact +
-                                                                                                        // fuzzy match
-            query.set("qf", "title");
-            query.set("defType", "edismax");
-            query.set("mm", "1");
-        }
-        if (queryStr.length() > 0) {
-            query.setQuery(queryStr.toString());
-        } else {
-            query.setQuery("*:*");
-        }
-        query.setStart((int) pageable.getOffset());
-        query.setRows(pageable.getPageSize());
-        pageable.getSort().forEach(order -> {
-            query.addSort(order.getProperty(),
-                    order.isAscending() ? SolrQuery.ORDER.asc : SolrQuery.ORDER.desc);
-        });
+        SolrQuery query = getSolrQuery(null, bookType, title);
         QueryResponse response = solrClient.query("books", query);
         SolrDocumentList docs = response.getResults();
         List<BooksResponseDTO> results = new ArrayList<>();
@@ -152,17 +123,22 @@ public class SolrService {
     }
 
     public long getTotalDocuments(String bookType, String title) throws SolrServerException, IOException {
-        SolrQuery query = new SolrQuery("*:*");
-        query.setRows(0); // Don't fetch any documents, only get the count
+        SolrQuery query = getSolrQuery(null, bookType, title);
+        query.setRows(0);
+        QueryResponse response = solrClient.query("books", query);
+        return response.getResults().getNumFound();
+
+    }
+
+    public SolrQuery getSolrQuery(Pageable pageable, String bookType, String title) {
+        SolrQuery query = new SolrQuery();
         // Filtering by book type
         StringBuilder queryStr = new StringBuilder();
-
         if (bookType != null && !bookType.isEmpty()) {
             queryStr.append("type:\"").append(bookType).append("\" ");
         }
         if (title != null && !title.isEmpty()) {
             queryStr.append("title:*").append(title).append("*^2 OR title:").append(title).append("~"); // Boost exact +
-            // fuzzy match
             query.set("qf", "title");
             query.set("defType", "edismax");
             query.set("mm", "1");
@@ -172,17 +148,15 @@ public class SolrService {
         } else {
             query.setQuery("*:*");
         }
-        QueryResponse response = solrClient.query("books", query);
-        return response.getResults().getNumFound();
-
-    }
-
-    public String convertToSolrRegex(String title) {
-        // Escape special characters in title (except spaces)
-        String escapedTitle = title.replaceAll("([+\\-&|!(){}\\[\\]^\"~*?:\\/])", "\\\\$1");
-
-        // Replace spaces with '.*' to allow matching between words
-        return "/" + escapedTitle.replace(" ", ".*") + "/";
+        if (pageable != null) {
+            query.setStart((int) pageable.getOffset());
+            query.setRows(pageable.getPageSize());
+            pageable.getSort().forEach(order -> {
+                query.addSort(order.getProperty(),
+                        order.isAscending() ? SolrQuery.ORDER.asc : SolrQuery.ORDER.desc);
+            });
+        }
+        return query;
     }
 
 }

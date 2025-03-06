@@ -22,30 +22,45 @@ public class BookSolrService {
         this.solrService = solrService;
     }
 
-    public void saveBook(BooksResponseDTO book) throws SolrServerException, IOException {
-        solrService.save(book);
+    public void saveBook(BooksResponseDTO book) {
+        try {
+            solrService.save(book);
+        } catch (SolrServerException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public List<BooksResponseDTO> searchBooks(String title)
-            throws SolrServerException, IOException, BaseHttpSolrClient.RemoteSolrException {
-        return solrService.searchByTitle(title);
+    public List<BooksResponseDTO> searchBooks(String title) {
+        try {
+            return solrService.searchByTitle(title);
+        } catch (SolrServerException | IOException | RemoteSolrException e) {
+            throw new RuntimeException("Error searching books", e);
+        }
     }
 
     public List<BooksResponseDTO> findBooksWithAuthorsAndRatings(Pageable pageable, String bookType, String flag,
-            String title)
-            throws SolrServerException, IOException, RemoteSolrException {
-        if (flag != null && flag.equals("price")) {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                    Sort.by("price").descending());
-        } else {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                    Sort.by("publishedAt").descending());
+            String title) {
+        try {
+            if (flag != null && flag.equals("price")) {
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                        Sort.by("price").descending());
+            } else {
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                        Sort.by("publishedAt").descending());
+            }
+            return solrService.findBooksWithAuthorsAndRatings(pageable, bookType, title);
+        } catch (SolrServerException | IOException | RemoteSolrException e) {
+            System.out.println(e);
+            throw new RuntimeException("Error searching books", e);
         }
-        return solrService.findBooksWithAuthorsAndRatings(pageable, bookType, flag, title);
     }
 
-    public long getTotalDocuments(String bookType, String title)
-            throws SolrServerException, IOException {
-        return solrService.getTotalDocuments(bookType, title);
+    public long getTotalDocuments(String bookType, String title) {
+        try {
+            return solrService.getTotalDocuments(bookType, title);
+        } catch (SolrServerException | IOException e) {
+            throw new RuntimeException("Error searching books", e);
+
+        }
     }
 }
