@@ -64,7 +64,7 @@ public class BooksRestController {
 			page = 0;
 		if (size == null)
 			size = 10;
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, size);
 		List<BooksResponseDTO> results = service.findAllWithPagination(pageable, type, sort, title);
 		return ResponseEntity.ok(results); // always 200
 	}

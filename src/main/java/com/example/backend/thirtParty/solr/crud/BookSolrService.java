@@ -41,12 +41,12 @@ public class BookSolrService {
     public List<BooksResponseDTO> findBooksWithAuthorsAndRatings(Pageable pageable, String bookType, String flag,
             String title) {
         try {
-            if (flag != null && flag.equals("price")) {
+            if ("price".equalsIgnoreCase(flag)) {
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("price").descending());
-            } else {
+                        Sort.by(Sort.Order.desc("price")));
+            } else if ("published_at".equalsIgnoreCase(flag)) {
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("publishedAt").descending());
+                        Sort.by(Sort.Order.desc("publishedAt")));
             }
             return solrService.findBooksWithAuthorsAndRatings(pageable, bookType, title);
         } catch (SolrServerException | IOException | RemoteSolrException e) {

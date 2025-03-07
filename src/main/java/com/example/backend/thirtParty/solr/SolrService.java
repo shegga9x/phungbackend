@@ -97,7 +97,7 @@ public class SolrService {
     public List<BooksResponseDTO> findBooksWithAuthorsAndRatings(Pageable pageable, String bookType, String title)
             throws SolrServerException, IOException,
             RemoteSolrException {
-        SolrQuery query = getSolrQuery(null, bookType, title);
+        SolrQuery query = getSolrQuery(pageable, bookType, title);
         QueryResponse response = solrClient.query("books", query);
         SolrDocumentList docs = response.getResults();
         List<BooksResponseDTO> results = new ArrayList<>();
