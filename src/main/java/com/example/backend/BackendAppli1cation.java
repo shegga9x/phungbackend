@@ -1,46 +1,57 @@
 package com.example.backend;
 
 public class BackendAppli1cation {
+	public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+		ListNode result = new ListNode();
+		if (list2.val <= list1.val) {
+			result = list2;
+			list2 = list1;
+			list1 = result;
+		}
+		result = new ListNode();
+		while (list1 != null) {
+			if (list2 != null && list1.next != null && list1.val <= list2.val) {
+				System.out.println(list1.val);
+				while (list2 != null && list1.next.val >= list2.val) {
+					System.out.println(list2.val);
+					list2 = list2.next;
+				}
+			}
+			list1 = list1.next;
+		}
+		while (list2 != null) {
+
+		}
+		while (list1 != null) {
+		}
+		return null;
+	}
 
 	// public static void main(String[] args) {
 	// 	BackendAppli1cation app = new BackendAppli1cation();
-	// 	String s = "ababccccbsdds";
-	// 	System.out.println(app.longestPalindrome(s));
-
+	// 	ListNode list1 = app.new ListNode(1, app.new ListNode(2, app.new ListNode(3)));
+	// 	ListNode list2 = app.new ListNode(4, app.new ListNode(5, app.new ListNode(6)));
+	// 	ListNode mergedList = app.mergeTwoLists(list1, list2);
+	// 	while (mergedList != null) {
+	// 		System.out.print(mergedList.val + " ");
+	// 		mergedList = mergedList.next;
+	// 	}
 	// }
 
-	public String longestPalindrome(String s) {
-		String result = "";
-		for (int i = 0; i < s.length(); i++) {
-			if (s.substring(i + 1).lastIndexOf(s.charAt(i)) != -1) {
-				result = s.substring(i, s.lastIndexOf(s.charAt(i)) + 1);
-				if (!isPalindrome(result)) {
-					return longestPalindrome1(result);
-				}
-			}
-		}
-		return (result);
-	}
+	public class ListNode {
+		int val;
+		ListNode next;
 
-	public String longestPalindrome1(String s) {
-		String result = "";
-		if (s.substring(1).lastIndexOf(s.charAt(0)) != -1) {
-			result = s.substring(0, s.lastIndexOf(s.charAt(0)) + 1);
-			if (!isPalindrome(result)) {
-				// result = longestPalindrome1(result);
-			}
+		ListNode() {
 		}
-		return (result);
-	}
 
-	public boolean isPalindrome(String s) {
-		String n1 = "";
-		String n2 = "";
-		for (int i = 0; i < s.length(); i++) {
-			n1 += s.charAt(i);
-			n2 += s.charAt(s.length() - i - 1);
+		ListNode(int val) {
+			this.val = val;
 		}
-		return n1.equals(n2);
 
+		ListNode(int val, ListNode next) {
+			this.val = val;
+			this.next = next;
+		}
 	}
 }
